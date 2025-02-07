@@ -11,47 +11,49 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
+    @State var selectedTab: Int = 2
+    @State var walletData = WalletData()
 
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
+        TabView(selection: $selectedTab) {
+            AddView()
+            .tabItem {
+                VStack {
+                    Image(systemName: "tray.and.arrow.down.fill")
+                    Text("追加")
                 }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
+            }.tag(0)
+            PaymentView()
+            .tabItem {
+                VStack {
+                    Image(systemName: "tray.and.arrow.up.fill")
+                    Text("支払い")
                 }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
+            }.tag(1)
+            HomeView(walletData: $walletData)
+            .tabItem {
+                VStack {
+                    Image(systemName: "house")
+                    Text("ホーム")
                 }
-            }
-        } detail: {
-            Text("Select an item")
+            }.tag(2)
+            LogView()
+            .tabItem {
+                VStack {
+                    Image(systemName: "list.bullet.clipboard")
+                    Text("履歴")
+                }
+            }.tag(3)
+            SettingView()
+            .tabItem {
+                VStack {
+                    Image(systemName: "gear")
+                    Text("設定")
+                }
+            }.tag(4)
         }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
+        .accentColor(.green)
+//        .tabViewStyle(PageTabViewStyle())
     }
 }
 
