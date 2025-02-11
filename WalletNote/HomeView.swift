@@ -38,7 +38,7 @@ struct HomeView: View {
                                         Text("残高")
                                             .font(.system(size: 16, weight: .regular, design: .default))
                                         Spacer()
-                                        Text("10,000")
+                                        Text(walletData.getSum())
                                             .font(.system(size: 24, weight: .bold, design: .default))
                                         Spacer()
                                             .frame(width: 16)
