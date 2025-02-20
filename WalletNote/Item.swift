@@ -43,4 +43,16 @@ struct WalletData {
         }
         validCashData = false
     }
+    mutating func addCash(_ value: Int) {
+        if (validCashData && cashData[value] != nil) {
+            cashData[value]! += 1
+            calcSum()
+        }
+    }
+    mutating func removeCash(_ value: Int) {
+        if (validCashData && cashData[value] != nil) {
+            cashData[value]! -= 1
+            calcSum()
+        }
+    }
 }
