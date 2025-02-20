@@ -18,41 +18,41 @@ final class Item {
 }
 
 struct WalletData {
-    var sum: Int = 0
+    var value: Int = 0
     var validCashData: Bool = false
     var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
     
-    private mutating func calcSum() {
+    private mutating func calcValue() {
         if (validCashData) {
-            sum = 0
+            value = 0
             for cash in cashData.keys {
-                sum += cash * cashData[cash]!
+                value += cash * cashData[cash]!
             }
         }
     }
     
-    func getSum() -> String {
-        return String.localizedStringWithFormat("%d", sum)
+    func getValue() -> String {
+        return String.localizedStringWithFormat("%d", value)
     }
-    mutating func setSum(_ value: String) {
-        if let intValue = Int(value) {
-            sum = intValue
+    mutating func setValue(_ stringValue: String) {
+        if let intValue = Int(stringValue) {
+            value = intValue
         }
         else {
-            sum = 0
+            value = 0
         }
         validCashData = false
     }
     mutating func addCash(_ value: Int) {
         if (validCashData && cashData[value] != nil) {
             cashData[value]! += 1
-            calcSum()
+            calcValue()
         }
     }
     mutating func removeCash(_ value: Int) {
         if (validCashData && cashData[value] != nil) {
             cashData[value]! -= 1
-            calcSum()
+            calcValue()
         }
     }
 }
