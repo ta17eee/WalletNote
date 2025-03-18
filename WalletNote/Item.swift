@@ -17,7 +17,27 @@ final class Item {
     }
 }
 
-struct WalletData {
+@Model
+final class WalletDataLog {
+    
+    enum Operation {
+        case plus
+        case minus
+        case set
+    }
+    
+    @Attribute(.unique)
+    var id: UUID = UUID()
+    var timestamp: Date
+    var data: WalletData
+    
+    init(timestamp: Date, data: WalletData) {
+        self.timestamp = timestamp
+        self.data = data
+    }
+}
+
+struct WalletData: Codable {
     var value: Int = 0
     var validCashData: Bool = false
     var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
@@ -54,5 +74,21 @@ struct WalletData {
             cashData[value]! -= 1
             calcValue()
         }
+    }
+    func encode() -> Data {
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+        guard let data = try? encoder.encode(self) else {
+            fatalError("Failed to encode")
+        }
+        return data
+    }
+    func decode(_ data: Data) -> WalletData {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        guard let walletData = try? decoder.decode(WalletData.self, from: data) else {
+            fatalError("Failed to decode")
+        }
+        return walletData
     }
 }
