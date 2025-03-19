@@ -9,128 +9,168 @@ import SwiftUI
 
 struct CashView: View {
     @Binding var data: WalletData
+    let title: String
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
-//                .stroke(Color.gray, lineWidth: 2)
-                .fill(Color.white)
-                .frame(height: 160)
-            HStack {
-                Spacer()
-//                    .frame(width: 16)
-                VStack {
-                    HStack {
-                        Bill10000()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("× " + String(data.cashData[10000]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[10000]! == 0 ? 0.25 : 1)
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
+                .frame(height: 272)
+            VStack {
+                HStack {
                     Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Bill5000()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("× " + String(data.cashData[5000]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
+                        .frame(width: 16)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.white)
+                            .frame(height: 64)
+                        HStack {
+                            Spacer()
+                                .frame(width: 16)
+                            Text(title)
+                                .font(.system(size: 16, weight: .regular, design: .default))
+                            Spacer()
+                            Text(data.getValue())
+                                .font(.system(size: 24, weight: .bold, design: .default))
+                            Spacer()
+                                .frame(width: 16)
+                            Text("円")
+                                .font(.system(size: 16, weight: .regular, design: .default))
+                            Spacer()
+                                .frame(width: 16)
+                        }
                     }
-                    .opacity(data.cashData[5000]! == 0 ? 0.25 : 1)
                     Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Bill1000()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("× " + String(data.cashData[1000]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[1000]! == 0 ? 0.25 : 1)
+                        .frame(width: 16)
                 }
-                Spacer()
-                Rectangle()
-                    .frame(width: 2, height: 160)
-                    .foregroundStyle(.gray)
-                Spacer()
-                VStack {
-                    HStack {
-                        Coin500()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("× " + String(data.cashData[500]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[500]! == 0 ? 0.25 : 1)
+                HStack {
                     Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Coin100()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("x " + String(data.cashData[100]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
+                        .frame(width: 16)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10)
+            //                .stroke(Color.gray, lineWidth: 2)
+                            .fill(Color.white)
+                            .frame(height: 160)
+                        HStack {
+                            Spacer()
+            //                    .frame(width: 16)
+                            VStack {
+                                HStack {
+                                    Bill10000()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("× " + String(data.cashData[10000]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[10000]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Bill5000()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("× " + String(data.cashData[5000]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[5000]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Bill1000()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("× " + String(data.cashData[1000]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[1000]! == 0 ? 0.25 : 1)
+                            }
+                            Spacer()
+                            Rectangle()
+                                .frame(width: 2, height: 160)
+                                .foregroundStyle(.gray)
+                            Spacer()
+                            VStack {
+                                HStack {
+                                    Coin500()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("× " + String(data.cashData[500]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[500]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Coin100()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("x " + String(data.cashData[100]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[100]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Coin50()
+                                    .frame(width: 32, height: 32)
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("x " + String(data.cashData[50]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[50]! == 0 ? 0.25 : 1)
+                            }
+                            Spacer()
+                            Rectangle()
+                                .frame(width: 2, height: 160)
+                                .foregroundStyle(.gray)
+                            Spacer()
+                            VStack {
+                                HStack {
+                                    Coin10()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("x " + String(data.cashData[10]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[10]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Coin5()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("x " + String(data.cashData[5]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[5]! == 0 ? 0.25 : 1)
+                                Spacer()
+                                    .frame(height: 16)
+                                HStack {
+                                    Coin1()
+                                    Spacer()
+                                        .frame(width: 8)
+                                    Text("x " + String(data.cashData[1]!))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(width: 40)
+                                }
+                                .opacity(data.cashData[1]! == 0 ? 0.25 : 1)
+                            }
+                            Spacer()
+            //                    .frame(width: 16)
+                        }
                     }
-                    .opacity(data.cashData[100]! == 0 ? 0.25 : 1)
                     Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Coin50()
-                        .frame(width: 32, height: 32)
-                        Spacer()
-                            .frame(width: 8)
-                        Text("x " + String(data.cashData[50]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[50]! == 0 ? 0.25 : 1)
+                        .frame(width: 16)
                 }
-                Spacer()
-                Rectangle()
-                    .frame(width: 2, height: 160)
-                    .foregroundStyle(.gray)
-                Spacer()
-                VStack {
-                    HStack {
-                        Coin10()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("x " + String(data.cashData[10]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[10]! == 0 ? 0.25 : 1)
-                    Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Coin5()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("x " + String(data.cashData[5]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[5]! == 0 ? 0.25 : 1)
-                    Spacer()
-                        .frame(height: 16)
-                    HStack {
-                        Coin1()
-                        Spacer()
-                            .frame(width: 8)
-                        Text("x " + String(data.cashData[1]!))
-                            .font(.system(size: 16, weight: .semibold, design: .default))
-                            .frame(width: 40)
-                    }
-                    .opacity(data.cashData[1]! == 0 ? 0.25 : 1)
-                }
-                Spacer()
-//                    .frame(width: 16)
             }
         }
     }
@@ -430,10 +470,10 @@ private struct removeCashIcon: View {
 #Preview {
     HStack {
         Spacer()
-            .frame(width: 32)
-        CashView(data: .constant(WalletData()))
+            .frame(width: 16)
+        CashView(data: .constant(WalletData()), title: "残高")
         Spacer()
-            .frame(width: 32)
+            .frame(width: 16)
     }
     Spacer()
         .frame(height: 32)
