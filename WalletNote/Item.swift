@@ -39,7 +39,7 @@ final class WalletDataLog {
 
 struct WalletData: Codable {
     var value: Int = 0
-    var validCashData: Bool = false
+    var validCashData: Bool = true
     var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
     
     private mutating func calcValue() {
@@ -70,7 +70,7 @@ struct WalletData: Codable {
         }
     }
     mutating func removeCash(_ value: Int) {
-        if (validCashData && cashData[value] != nil) {
+        if (validCashData && cashData[value] != nil && cashData[value]! > 0) {
             cashData[value]! -= 1
             calcValue()
         }

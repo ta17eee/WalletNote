@@ -13,7 +13,7 @@ struct CashView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.gray, lineWidth: 2)
+//                .stroke(Color.gray, lineWidth: 2)
                 .fill(Color.white)
                 .frame(height: 160)
             HStack {
