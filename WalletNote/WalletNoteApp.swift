@@ -22,10 +22,19 @@ struct WalletNoteApp: App {
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
+    var savedWalletData: WalletData
+    
+    init() {
+        if let savedData = UserDefaults.standard.data(forKey: "walletData") {
+            savedWalletData = WalletData.decode(savedData)
+        } else {
+            savedWalletData = .init()
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(walletData: savedWalletData)
         }
         .modelContainer(sharedModelContainer)
     }

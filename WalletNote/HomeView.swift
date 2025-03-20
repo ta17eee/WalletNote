@@ -73,6 +73,7 @@ private struct CashInitView: View {
                     Spacer()
                     Button("確定") {
                         data = inputtingData
+                        UserDefaults.standard.set(data.encode(), forKey: "walletData")
                         dismiss()
                     }
                 }

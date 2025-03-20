@@ -12,7 +12,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
     @State var selectedTab: Int = 2
-    @State var walletData = WalletData()
+    @State var walletData: WalletData
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -58,6 +58,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(walletData: .init())
         .modelContainer(for: Item.self, inMemory: true)
 }
