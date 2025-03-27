@@ -13,7 +13,7 @@ struct CashView: View {
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
                 .frame(height: 272)
             VStack {
@@ -21,7 +21,7 @@ struct CashView: View {
                     Spacer()
                         .frame(width: 16)
                     ZStack {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 8)
                             .fill(Color.white)
                             .frame(height: 64)
                         HStack {
@@ -47,7 +47,7 @@ struct CashView: View {
                     Spacer()
                         .frame(width: 16)
                     ZStack {
-                        RoundedRectangle(cornerRadius: 10)
+                        RoundedRectangle(cornerRadius: 8)
             //                .stroke(Color.gray, lineWidth: 2)
                             .fill(Color.white)
                             .frame(height: 160)
@@ -181,7 +181,7 @@ struct CashInputView: View {
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.gray, lineWidth: 2)
                 .fill(Color.white)
                 .frame(height: 196)
