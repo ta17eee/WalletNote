@@ -35,13 +35,13 @@ struct HomeView: View {
                             Spacer()
                                 .frame(width: 32)
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.gray, lineWidth: 4)
                                 .fill(Color.white)
+                                .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             Spacer()
                                 .frame(width: 32)
                         }
-                        Text("登録する")
+                        Text("設定する")
                     }
                 }
                 Spacer()

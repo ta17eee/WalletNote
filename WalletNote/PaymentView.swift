@@ -28,7 +28,7 @@ struct PaymentView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.white)
-                            .stroke(Color.gray, lineWidth: 4)
+                            .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         TextField("ここにタイトルを入れましょう", text: $title)
                             .font(.system(size: 20, weight: .bold, design: .default))
@@ -46,7 +46,7 @@ struct PaymentView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.white)
-                            .stroke(Color.gray, lineWidth: 4)
+                            .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         HStack {
                             Spacer()
@@ -96,7 +96,7 @@ struct PaymentView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.white)
-                                .stroke(Color.gray, lineWidth: 4)
+                                .stroke(Color.gray, lineWidth: 2)
                                 .frame(width: 64, height: 64)
                             Text("おつり\n自動")
                                 .font(.system(size: 20, weight: .bold, design: .default))
@@ -146,7 +146,7 @@ struct PaymentView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.white)
-                                .stroke(Color.gray, lineWidth: 4)
+                                .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
                                 Image(systemName: "gobackward")
@@ -164,7 +164,7 @@ struct PaymentView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.white)
-                                .stroke(Color.gray, lineWidth: 4)
+                                .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
                                 Image(systemName: "square.and.arrow.down")
