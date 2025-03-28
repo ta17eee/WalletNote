@@ -14,6 +14,7 @@ struct PaymentView: View {
     @State var title: String = ""
     @State var selectedTab: Int = 0
     @State var autoChange: Bool = true
+    @FocusState var isTextFieldFocused: Bool
     
     var body: some View {
         ZStack {
@@ -52,11 +53,30 @@ struct PaymentView: View {
                                 .frame(width: 16)
                             Text("合計金額")
                                 .font(.system(size: 20, weight: .bold, design: .default))
-                            TextField(pay.getValue(), text: $sum)
-                                .font(.system(size: 24, weight: .bold, design: .default))
-                                .multilineTextAlignment(.trailing)
-                                .keyboardType(.numberPad)
-                                .padding()
+                            if autoChange {
+                                TextField(pay.getValue(), text: $sum)
+                                    .font(.system(size: 24, weight: .bold, design: .default))
+                                    .multilineTextAlignment(.trailing)
+                                    .keyboardType(.numberPad)
+                                    .focused($isTextFieldFocused)
+                                    .padding()
+                                    .onChange(of: isTextFieldFocused) {
+                                        if isTextFieldFocused {
+                                            sum = sum.replacingOccurrences(of: ",", with: "")
+                                        } else {
+                                            if let value = Int(sum) {
+                                                sum = String.localizedStringWithFormat("%d", value)
+                                            } else {
+                                                sum = String.localizedStringWithFormat("%d", pay.value - change.value)
+                                            }
+                                        }
+                                    }
+                            } else {
+                                Spacer()
+                                Text(String.localizedStringWithFormat("%d", pay.value - change.value))
+                                    .font(.system(size: 24, weight: .bold, design: .default))
+                                    .padding()
+                            }
                             Text("円")
                                 .font(.system(size: 20, weight: .bold, design: .default))
                             Spacer()
@@ -67,6 +87,11 @@ struct PaymentView: View {
                         .frame(width: 16)
                     Button(action: {
                         autoChange.toggle()
+                        if autoChange {
+                            sum = String.localizedStringWithFormat("%d", pay.value - change.value)
+                        } else {
+                            change = pay.calcChange(sum)
+                        }
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
@@ -92,25 +117,18 @@ struct PaymentView: View {
                     }.tag(0)
                     HStack {
                         Spacer().frame(width: 16)
-                        CashView(data: $change, title: "お釣り")
+                        CashView(data: autoChange ? .constant(pay.calcChange(sum)) : $change, title: "お釣り")
                         Spacer().frame(width: 16)
                     }.tag(1)
                 }
                 .tabViewStyle(PageTabViewStyle())
                 .frame(height: 306)
-//                Text(String(selectedTab))
-//                Button(action: {
-//                    selectedTab = (selectedTab + 1) % 2
-//                }) {
-//                    Text("Tab切替")
-//                }
                 HStack {
                     Spacer()
                         .frame(width: 16)
                     CashInputView(data: selectedTab == 0 ? $pay : $change)
                         .disabled(autoChange && selectedTab == 1)
                         .saturation(autoChange && selectedTab == 1 ? 0 : 1)
-//                        .opacity(autoChange && selectedTab == 1 ? 0.5 : 1)
                     Spacer()
                         .frame(width: 16)
                 }
@@ -122,6 +140,7 @@ struct PaymentView: View {
                     Button(action: {
                         pay = .init()
                         change = .init()
+                        sum = ""
                         selectedTab = 0
                     }) {
                         ZStack {
@@ -168,5 +187,6 @@ struct PaymentView: View {
 #Preview {
     TabView {
         PaymentView()
+            .accentColor(.green)
     }
 }

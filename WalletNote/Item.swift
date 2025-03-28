@@ -39,38 +39,43 @@ final class WalletDataLog {
 
 struct WalletData: Codable {
     var value: Int = 0
-    var validCashData: Bool = true
     var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
     
     private mutating func calcValue() {
-        if (validCashData) {
-            value = 0
-            for cash in cashData.keys {
-                value += cash * cashData[cash]!
-            }
+        value = 0
+        for cash in cashData.keys {
+            value += cash * cashData[cash]!
         }
     }
-    
     func getValue() -> String {
         return String.localizedStringWithFormat("%d", value)
     }
-    mutating func setValue(_ stringValue: String) {
-        if let intValue = Int(stringValue) {
-            value = intValue
+    func calcChange(_ sum: String) -> WalletData{
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        guard let number = formatter.number(from: sum)?.intValue else {
+            return WalletData()
         }
-        else {
-            value = 0
+        var changeValue = value - number
+        if changeValue <= 0 {
+            return WalletData()
         }
-        validCashData = false
+        var changeData = WalletData()
+        for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
+            changeData.cashData[cash] = changeValue / cash
+            changeValue %= cash
+        }
+        changeData.calcValue()
+        return changeData
     }
     mutating func addCash(_ value: Int) {
-        if (validCashData && cashData[value] != nil) {
+        if (cashData[value] != nil) {
             cashData[value]! += 1
             calcValue()
         }
     }
     mutating func removeCash(_ value: Int) {
-        if (validCashData && cashData[value] != nil && cashData[value]! > 0) {
+        if (cashData[value] != nil && cashData[value]! > 0) {
             cashData[value]! -= 1
             calcValue()
         }
