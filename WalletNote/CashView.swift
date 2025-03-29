@@ -53,7 +53,7 @@ struct CashView: View {
                             .frame(height: 160)
                         HStack {
                             Spacer()
-            //                    .frame(width: 16)
+                                .frame(width: 16)
                             VStack {
                                 HStack {
                                     Bill10000()

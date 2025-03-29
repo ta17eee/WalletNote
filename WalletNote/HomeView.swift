@@ -48,7 +48,7 @@ struct HomeView: View {
             }
             .sheet(isPresented: $isPresented) {
                 CashInitView(data: $walletData)
-                    .presentationDetents([.height(528)])
+                    .presentationDetents([.height(560)])
             }
         }
     }
@@ -64,20 +64,23 @@ private struct CashInitView: View {
             Spacer()
                 .frame(width: 16)
             VStack {
-                Spacer()
-                    .frame(height: 16)
                 HStack {
                     Button("キャンセル") {
                         dismiss()
                     }
+                    .padding(.horizontal)
+                    .frame(height: 44)
                     Spacer()
                     Button("確定") {
                         data = inputtingData
                         UserDefaults.standard.set(data.encode(), forKey: "walletData")
                         dismiss()
                     }
+                    .padding(.horizontal)
+                    .frame(height: 44)
                 }
                 Spacer()
+                    .frame(height: 0)
                 CashView(data: $inputtingData, title: "残高")
                 Spacer()
                     .frame(height: 16)
@@ -91,5 +94,8 @@ private struct CashInitView: View {
 }
 
 #Preview {
-    HomeView(walletData: .constant(WalletData()))
+    TabView {
+        HomeView(walletData: .constant(WalletData()))
+//        CashInitView(data: .constant(WalletData()))
+    }
 }
