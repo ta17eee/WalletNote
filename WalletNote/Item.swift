@@ -20,20 +20,21 @@ final class Item {
 @Model
 final class WalletDataLog {
     
-    enum Operation {
-        case plus
-        case minus
-        case set
+    enum OperationType {
+        case plus(WalletData)
+        case pay(pay: WalletData, change: WalletData)
+        case set(WalletData)
+        case quick(WalletData)
     }
     
     @Attribute(.unique)
     var id: UUID = UUID()
     var timestamp: Date
-    var data: WalletData
+    var type: OperationType
     
-    init(timestamp: Date, data: WalletData) {
+    init(timestamp: Date, type: OperationType) {
         self.timestamp = timestamp
-        self.data = data
+        self.type = type
     }
 }
 
@@ -78,6 +79,26 @@ struct WalletData: Codable {
         if (cashData[value] != nil && cashData[value]! > 0) {
             cashData[value]! -= 1
             calcValue()
+        }
+    }
+    func payable(payment: WalletData) -> Bool {
+        for (key, value) in self.cashData {
+            if value < payment.cashData[key]! {
+                return false
+            }
+        }
+        return true
+    }
+    mutating func plus(_ adder: WalletData) {
+        for (key, _) in self.cashData {
+            self.cashData[key]! += adder.cashData[key]!
+        }
+    }
+    mutating func minus(_ minus: WalletData) {
+        if (minus.payable(payment: minus)) {
+            for (key, _) in self.cashData {
+                self.cashData[key]! -= minus.cashData[key]!
+            }
         }
     }
     func encode() -> Data {
