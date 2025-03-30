@@ -20,21 +20,39 @@ final class Item {
 @Model
 final class WalletDataLog {
     
-    enum OperationType {
-        case plus(WalletData)
-        case pay(pay: WalletData, change: WalletData)
-        case set(WalletData)
-        case quick(WalletData)
-    }
+//    enum OperationType {
+//        case plus(WalletData)
+//        case pay(pay: WalletData, change: WalletData)
+//        case set(WalletData)
+//        case quick(WalletData)
+//    }
     
     @Attribute(.unique)
     var id: UUID = UUID()
     var timestamp: Date
-    var type: OperationType
+    var data: WalletData
+    var change: WalletData?
+    var type: String
+//    var type: OperationType
     
-    init(timestamp: Date, type: OperationType) {
+    init(timestamp: Date, type: String, data: WalletData, change: WalletData? = nil) {
         self.timestamp = timestamp
-        self.type = type
+        self.data = data
+        if type == "pay" {
+            self.change = change
+        }
+        switch type {
+        case "plus":
+            self.type = "plus"
+        case "pay":
+            self.type = "pay"
+        case "set":
+            self.type = "set"
+        case "quick":
+            self.type = "quick"
+        default:
+            self.type = "unknown"
+        }
     }
 }
 
