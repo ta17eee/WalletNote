@@ -38,9 +38,11 @@ struct HomeView: View {
                                 .fill(Color.white)
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
-                            HStack {
+                            VStack {
                                 Image(systemName: "gobackward")
+                                    .font(.system(size: 20, weight: .bold, design: .default))
                                 Text("初期化する")
+                                    .font(.system(size: 16, weight: .bold, design: .default))
                             }
                         }
                     }
@@ -54,9 +56,11 @@ struct HomeView: View {
                                 .fill(Color.white)
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
-                            HStack {
+                            VStack {
                                 Image(systemName: "pencil")
+                                    .font(.system(size: 20, weight: .bold, design: .default))
                                 Text("クイックメモ")
+                                    .font(.system(size: 16, weight: .bold, design: .default))
                             }
                         }
                     }
