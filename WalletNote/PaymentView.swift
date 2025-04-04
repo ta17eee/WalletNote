@@ -149,7 +149,7 @@ struct PaymentView: View {
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
-                                Image(systemName: "gobackward")
+                                Image(systemName: "eraser")
                                     .font(.system(size: 20, weight: .bold, design: .default))
                                 Text("リセット")
                                     .font(.system(size: 16, weight: .bold, design: .default))
@@ -187,6 +187,5 @@ struct PaymentView: View {
 #Preview {
     TabView {
         PaymentView()
-            .accentColor(.green)
     }
 }
