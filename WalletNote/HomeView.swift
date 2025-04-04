@@ -26,24 +26,44 @@ struct HomeView: View {
                         .frame(width: 16)
                 }
                 Spacer()
-                    .frame(height: 32)
-                Button(action: {
-                    isPresented.toggle()
-                }) {
-                    ZStack {
-                        HStack {
-                            Spacer()
-                                .frame(width: 32)
-                            RoundedRectangle(cornerRadius: 16)
+                    .frame(height: 16)
+                HStack {
+                    Spacer()
+                        .frame(width: 16)
+                    Button(action: {
+                        isPresented.toggle()
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.white)
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
-                            Spacer()
-                                .frame(width: 32)
+                            HStack {
+                                Image(systemName: "gobackward")
+                                Text("初期化する")
+                            }
                         }
-                        Text("設定する")
                     }
+                    Spacer()
+                        .frame(width: 16)
+                    Button(action: {
+                        
+                    }) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color.white)
+                                .stroke(Color.gray, lineWidth: 2)
+                                .frame(height: 64)
+                            HStack {
+                                Image(systemName: "pencil")
+                                Text("クイックメモ")
+                            }
+                        }
+                    }
+                    Spacer()
+                        .frame(width: 16)
                 }
+                
                 Spacer()
             }
             .sheet(isPresented: $isPresented) {
