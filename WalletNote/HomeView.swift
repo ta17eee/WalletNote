@@ -8,8 +8,17 @@
 import SwiftUI
 
 struct HomeView: View {
+    enum ActiveSheet: Identifiable {
+        case initView, quickView
+        
+        var id: Int {
+            hashValue
+        }
+    }
+    
     @Binding var walletData: WalletData
     @State private var isPresented: Bool = false
+    @State private var activeSheet: ActiveSheet?
     
     var body: some View {
         ZStack {
@@ -31,7 +40,7 @@ struct HomeView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        isPresented.toggle()
+                        activeSheet = .initView
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
@@ -49,7 +58,7 @@ struct HomeView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        
+                        activeSheet = .quickView
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
@@ -70,9 +79,15 @@ struct HomeView: View {
                 
                 Spacer()
             }
-            .sheet(isPresented: $isPresented) {
-                CashInitView(data: $walletData)
-                    .presentationDetents([.height(560)])
+            .sheet(item: $activeSheet) { sheet in
+                switch sheet {
+                case .initView:
+                    CashInitView(data: $walletData)
+                        .presentationDetents([.height(560)])
+                case .quickView:
+                    QuickNoteView(data: $walletData)
+                        .presentationDetents([.height(640)])
+                }
             }
         }
     }
@@ -109,6 +124,58 @@ private struct CashInitView: View {
                 Spacer()
                     .frame(height: 16)
                 CashInputView(data: $inputtingData)
+                Spacer()
+            }
+            Spacer()
+                .frame(width: 16)
+        }
+    }
+}
+
+private struct QuickNoteView: View {
+    @Environment(\.dismiss) var dismiss
+    @Binding var data: WalletData
+    @State var title: String = ""
+    @State var diff: WalletData = .init()
+    
+    var body: some View {
+        HStack {
+            Spacer()
+                .frame(width: 16)
+            VStack {
+                HStack {
+                    Button("キャンセル") {
+                        dismiss()
+                    }
+                    .padding(.horizontal)
+                    .frame(height: 44)
+                    Spacer()
+                    Button("確定") {
+                        data = data.minus(diff)
+                        UserDefaults.standard.set(data.encode(), forKey: "walletData")
+                        dismiss()
+                    }
+                    .padding(.horizontal)
+                    .frame(height: 44)
+                }
+                Spacer()
+                    .frame(height: 0)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.white)
+                        .stroke(Color.gray, lineWidth: 2)
+                        .frame(height: 64)
+                    TextField("ここにタイトルを入れましょう", text: $title)
+                        .font(.system(size: 20, weight: .bold, design: .default))
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                Spacer()
+                    .frame(height: 16)
+                CashView(data: .constant(data.minus(diff)), title: "残高")
+                Spacer()
+                    .frame(height: 16)
+                CashInputView(data: $diff)
                 Spacer()
             }
             Spacer()
