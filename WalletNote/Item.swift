@@ -107,17 +107,22 @@ struct WalletData: Codable {
         }
         return true
     }
-    mutating func plus(_ adder: WalletData) {
-        for (key, _) in self.cashData {
-            self.cashData[key]! += adder.cashData[key]!
+    func plus(_ adder: WalletData) -> WalletData {
+        var result: WalletData = self
+        for (key, _) in result.cashData {
+            result.cashData[key]! += self.cashData[key]!
         }
+        return result
     }
-    mutating func minus(_ minus: WalletData) {
-        if (minus.payable(payment: minus)) {
-            for (key, _) in self.cashData {
-                self.cashData[key]! -= minus.cashData[key]!
+    func minus(_ minus: WalletData) -> WalletData {
+        var result: WalletData = self
+        if (result.payable(payment: minus)) {
+            for (key, _) in result.cashData {
+                result.cashData[key]! -= minus.cashData[key]!
             }
+            return result
         }
+        return .init()
     }
     func encode() -> Data {
         let encoder = JSONEncoder()
