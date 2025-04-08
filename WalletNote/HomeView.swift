@@ -151,7 +151,7 @@ private struct QuickNoteView: View {
                     .frame(height: 44)
                     Spacer()
                     Button("確定") {
-                        data = data.minus(diff)
+                        data = data.plus(diff)
                         UserDefaults.standard.set(data.encode(), forKey: "walletData")
                         dismiss()
                     }
@@ -172,7 +172,7 @@ private struct QuickNoteView: View {
                 }
                 Spacer()
                     .frame(height: 16)
-                CashView(data: .constant(data.minus(diff)), title: "残高")
+                CashView(data: .constant(data.plus(diff)), title: "残高")
                 Spacer()
                     .frame(height: 16)
                 CashInputView(data: $diff)

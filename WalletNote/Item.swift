@@ -109,16 +109,16 @@ struct WalletData: Codable {
     }
     func plus(_ adder: WalletData) -> WalletData {
         var result: WalletData = self
-        for (key, _) in result.cashData {
-            result.cashData[key]! += self.cashData[key]!
+        for (key, value) in adder.cashData {
+            result.cashData[key]! += value
         }
         return result
     }
     func minus(_ minus: WalletData) -> WalletData {
         var result: WalletData = self
         if (result.payable(payment: minus)) {
-            for (key, _) in result.cashData {
-                result.cashData[key]! -= minus.cashData[key]!
+            for (key, value) in minus.cashData {
+                result.cashData[key]! -= value
             }
             return result
         }
