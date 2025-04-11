@@ -58,7 +58,7 @@ final class WalletDataLog {
 
 struct WalletData: Codable {
     var value: Int = 0
-    var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
+    private var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
     
     private mutating func calcValue() {
         value = 0
@@ -68,6 +68,12 @@ struct WalletData: Codable {
     }
     func getValueString() -> String {
         return String.localizedStringWithFormat("%d", value)
+    }
+    func getCashAmount(_ cash: Int) -> Int {
+        if let amount = cashData[cash] {
+            return amount
+        }
+        return 0
     }
     func calcChange(_ sum: String) -> WalletData{
         let formatter = NumberFormatter()
