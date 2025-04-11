@@ -66,7 +66,7 @@ struct WalletData: Codable {
             value += cash * cashData[cash]!
         }
     }
-    func getValue() -> String {
+    func getValueString() -> String {
         return String.localizedStringWithFormat("%d", value)
     }
     func calcChange(_ sum: String) -> WalletData{

@@ -54,7 +54,7 @@ struct PaymentView: View {
                             Text("合計金額")
                                 .font(.system(size: 20, weight: .bold, design: .default))
                             if autoChange {
-                                TextField(pay.getValue(), text: $sum)
+                                TextField(pay.getValueString(), text: $sum)
                                     .font(.system(size: 24, weight: .bold, design: .default))
                                     .multilineTextAlignment(.trailing)
                                     .keyboardType(.numberPad)

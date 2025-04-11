@@ -30,7 +30,7 @@ struct CashView: View {
                             Text(title)
                                 .font(.system(size: 16, weight: .regular, design: .default))
                             Spacer()
-                            Text(data.getValue())
+                            Text(data.getValueString())
                                 .font(.system(size: 24, weight: .bold, design: .default))
                             Spacer()
                                 .frame(width: 16)
