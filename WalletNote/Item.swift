@@ -127,10 +127,13 @@ struct WalletData: Codable {
         }
         return data
     }
-    static func decode(_ data: Data) -> WalletData {
+}
+
+extension Data {
+    func decodeToWalletData() -> WalletData {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        guard let walletData = try? decoder.decode(WalletData.self, from: data) else {
+        guard let walletData = try? decoder.decode(WalletData.self, from: self) else {
             fatalError("Failed to decode")
         }
         return walletData

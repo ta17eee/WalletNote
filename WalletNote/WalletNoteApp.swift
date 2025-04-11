@@ -26,7 +26,7 @@ struct WalletNoteApp: App {
     
     init() {
         if let savedData = UserDefaults.standard.data(forKey: "walletData") {
-            savedWalletData = WalletData.decode(savedData)
+            savedWalletData = savedData.decodeToWalletData()
         } else {
             savedWalletData = .init()
         }
