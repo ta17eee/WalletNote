@@ -112,6 +112,7 @@ struct WalletData: Codable {
         for (key, value) in adder.cashData {
             result.cashData[key]! += value
         }
+        result.calcValue()
         return result
     }
     func minus(_ minus: WalletData) -> WalletData {
@@ -120,6 +121,7 @@ struct WalletData: Codable {
             for (key, value) in minus.cashData {
                 result.cashData[key]! -= value
             }
+            result.calcValue()
             return result
         }
         return .init()
