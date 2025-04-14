@@ -57,17 +57,67 @@ final class WalletDataLog {
 }
 
 struct WalletData: Codable {
-    var value: Int = 0
-    var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
     
-    private mutating func calcValue() {
-        value = 0
-        for cash in cashData.keys {
-            value += cash * cashData[cash]!
+    struct CashData: Codable {
+        private var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
+        
+        func getCashAmount(_ cash: Int) -> Int {
+            guard let amount = cashData[cash] else {
+                return 0
+            }
+            return amount
+        }
+        func getValue() -> Int {
+            var sum: Int = 0
+            for (key, value) in cashData {
+                sum += key * value
+            }
+            return sum
+        }
+        func reverse() -> CashData {
+            var result: CashData = .init()
+            for (key, value) in cashData {
+                result.setCash(key, -value)
+            }
+            return result
+        }
+        mutating func setCash(_ cash: Int, _ amount: Int) {
+            if let _ = cashData[cash] {
+                cashData[cash] = amount
+            }
+        }
+        mutating func updateCash(_ cash: Int, _ amount: Int) -> Bool {
+            guard let value = cashData[cash] else {
+                return false
+            }
+            cashData[cash] = value + amount
+            return true
         }
     }
-    func getValue() -> String {
+    
+    var value: Int = 0
+    private let cashDenominations: [Int]
+    private var cashData: CashData = .init()
+    private let min: CashData?
+    private let max: CashData?
+    
+    init(min: CashData? = nil, max: CashData? = nil) {
+        self.min = min?.reverse()
+        self.max = max
+        cashDenominations = [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] //JPY
+    }
+    
+    private mutating func calcValue() {
+        value = cashData.getValue()
+    }
+    func getValueString() -> String {
         return String.localizedStringWithFormat("%d", value)
+    }
+    func getCashData() -> CashData {
+        return cashData
+    }
+    func getCashAmount(_ cash: Int) -> Int {
+        return cashData.getCashAmount(cash)
     }
     func calcChange(_ sum: String) -> WalletData{
         let formatter = NumberFormatter()
@@ -80,44 +130,53 @@ struct WalletData: Codable {
             return WalletData()
         }
         var changeData = WalletData()
-        for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
-            changeData.cashData[cash] = changeValue / cash
+        for cash in cashDenominations {
+            changeData.cashData.setCash(cash, changeValue / cash)
             changeValue %= cash
         }
         changeData.calcValue()
         return changeData
     }
-    mutating func addCash(_ value: Int) {
-        if (cashData[value] != nil) {
-            cashData[value]! += 1
-            calcValue()
+    mutating func addCash(_ cash: Int, _ amount: Int = 1) {
+        guard cashData.getCashAmount(cash) < max?.getCashAmount(cash) ?? 99 else {
+            return
         }
+        _ = cashData.updateCash(cash, amount)
+        calcValue()
     }
-    mutating func removeCash(_ value: Int) {
-        if (cashData[value] != nil && cashData[value]! > 0) {
-            cashData[value]! -= 1
-            calcValue()
+    mutating func removeCash(_ cash: Int, _ amount: Int = 1) {
+        guard cashData.getCashAmount(cash) > min?.getCashAmount(cash) ?? 0 else {
+            return
         }
+        _ = cashData.updateCash(cash, -amount)
+        calcValue()
     }
     func payable(payment: WalletData) -> Bool {
-        for (key, value) in self.cashData {
-            if value < payment.cashData[key]! {
+        for cash in cashDenominations {
+            if self.cashData.getCashAmount(cash) < payment.cashData.getCashAmount(cash) {
                 return false
             }
         }
         return true
     }
-    mutating func plus(_ adder: WalletData) {
-        for (key, _) in self.cashData {
-            self.cashData[key]! += adder.cashData[key]!
+    func plus(_ adder: WalletData) -> WalletData {
+        var result: WalletData = self
+        for cash in cashDenominations {
+            _ = result.cashData.updateCash(cash, adder.cashData.getCashAmount(cash))
         }
+        result.calcValue()
+        return result
     }
-    mutating func minus(_ minus: WalletData) {
-        if (minus.payable(payment: minus)) {
-            for (key, _) in self.cashData {
-                self.cashData[key]! -= minus.cashData[key]!
+    func minus(_ minus: WalletData) -> WalletData {
+        var result: WalletData = self
+        if (result.payable(payment: minus)) {
+            for cash in cashDenominations {
+                _ = result.cashData.updateCash(cash, -minus.cashData.getCashAmount(cash))
             }
+            result.calcValue()
+            return result
         }
+        return .init()
     }
     func encode() -> Data {
         let encoder = JSONEncoder()
