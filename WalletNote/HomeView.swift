@@ -85,7 +85,7 @@ struct HomeView: View {
                     CashInitView(data: $walletData)
                         .presentationDetents([.height(560)])
                 case .quickView:
-                    QuickNoteView(data: $walletData)
+                    QuickNoteView(walletData: $walletData)
                         .presentationDetents([.height(640)])
                 }
             }
@@ -136,7 +136,12 @@ private struct QuickNoteView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var data: WalletData
     @State var title: String = ""
-    @State var diff: WalletData = .init()
+    @State var diff: WalletData
+    
+    init(walletData: Binding<WalletData>) {
+        _data = walletData
+        diff = WalletData(min: walletData.wrappedValue.getCashData())
+    }
     
     var body: some View {
         HStack {
