@@ -187,6 +187,7 @@ struct PaymentView: View {
                     .frame(maxHeight: 16)
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
     
     private func reset() {

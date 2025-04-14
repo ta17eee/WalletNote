@@ -186,6 +186,7 @@ private struct QuickNoteView: View {
             Spacer()
                 .frame(width: 16)
         }
+        .ignoresSafeArea(.keyboard)
     }
 }
 

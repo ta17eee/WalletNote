@@ -83,6 +83,7 @@ struct AddView: View {
                     .frame(width: 16)
             }
         }
+        .ignoresSafeArea(.keyboard)
     }
     
     private func reset() {
