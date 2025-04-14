@@ -74,35 +74,37 @@ struct WalletData: Codable {
             }
             return sum
         }
+        func reverse() -> CashData {
+            var result: CashData = .init()
+            for (key, value) in cashData {
+                result.setCash(key, -value)
+            }
+            return result
+        }
         mutating func setCash(_ cash: Int, _ amount: Int) {
             if let _ = cashData[cash] {
                 cashData[cash] = amount
             }
         }
-        mutating func addCash(_ cash: Int, _ amount: Int = 1) -> Bool {
+        mutating func updateCash(_ cash: Int, _ amount: Int) -> Bool {
             guard let value = cashData[cash] else {
                 return false
             }
             cashData[cash] = value + amount
             return true
         }
-        mutating func removeCash(_ cash: Int, _ amount: Int = 1) -> Bool {
-            guard let value = cashData[cash] else {
-                return false
-            }
-            cashData[cash] = value - amount
-            return true
-        }
     }
     
     var value: Int = 0
+    private let cashDenominations: [Int]
     private var cashData: CashData = .init()
     private let min: CashData?
     private let max: CashData?
     
     init(min: CashData? = nil, max: CashData? = nil) {
-        self.min = min
+        self.min = min?.reverse()
         self.max = max
+        cashDenominations = [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] //JPY
     }
     
     private mutating func calcValue() {
@@ -128,27 +130,29 @@ struct WalletData: Codable {
             return WalletData()
         }
         var changeData = WalletData()
-        for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
+        for cash in cashDenominations {
             changeData.cashData.setCash(cash, changeValue / cash)
             changeValue %= cash
         }
         changeData.calcValue()
         return changeData
     }
-    mutating func addCash(_ cash: Int) -> Bool {
+    mutating func addCash(_ cash: Int, _ amount: Int = 1) {
         guard cashData.getCashAmount(cash) < max?.getCashAmount(cash) ?? 99 else {
-            return false
+            return
         }
-        return cashData.addCash(cash)
+        _ = cashData.updateCash(cash, amount)
+        calcValue()
     }
-    mutating func removeCash(_ cash: Int) -> Bool {
+    mutating func removeCash(_ cash: Int, _ amount: Int = 1) {
         guard cashData.getCashAmount(cash) > min?.getCashAmount(cash) ?? 0 else {
-            return false
+            return
         }
-        return cashData.removeCash(cash)
+        _ = cashData.updateCash(cash, -amount)
+        calcValue()
     }
     func payable(payment: WalletData) -> Bool {
-        for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
+        for cash in cashDenominations {
             if self.cashData.getCashAmount(cash) < payment.cashData.getCashAmount(cash) {
                 return false
             }
@@ -157,8 +161,8 @@ struct WalletData: Codable {
     }
     func plus(_ adder: WalletData) -> WalletData {
         var result: WalletData = self
-        for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
-            _ = result.cashData.addCash(cash, value)
+        for cash in cashDenominations {
+            _ = result.cashData.updateCash(cash, adder.cashData.getCashAmount(cash))
         }
         result.calcValue()
         return result
@@ -166,8 +170,8 @@ struct WalletData: Codable {
     func minus(_ minus: WalletData) -> WalletData {
         var result: WalletData = self
         if (result.payable(payment: minus)) {
-            for cash in [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] {
-                _ = result.cashData.removeCash(cash, value)
+            for cash in cashDenominations {
+                _ = result.cashData.updateCash(cash, -minus.cashData.getCashAmount(cash))
             }
             result.calcValue()
             return result
