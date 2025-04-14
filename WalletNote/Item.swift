@@ -17,7 +17,7 @@ final class WalletDataLog {
     private(set) var data: WalletData
     private(set) var type: String
     
-    init(timestamp: Date, title: String, type: String, data: WalletData) {
+    init(timestamp: Date = Date(), title: String, type: String, data: WalletData) {
         switch type {
         case "plus":
             self.type = "plus"

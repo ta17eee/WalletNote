@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct PaymentView: View {
+    @Environment(\.modelContext) private var modelContext
     @Binding var walletData: WalletData
     @State var sum: String = ""
     @State var pay: WalletData
@@ -162,9 +164,13 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        
                         walletData = walletData.minus(pay).plus(change)
                         UserDefaults.standard.set(walletData.encode(), forKey: "walletData")
+                        
+                        let log = WalletDataLog(title: title, type: "pay", data: change.minus(pay))
+                        modelContext.insert(log)
+                        try? modelContext.save()
+                        
                         reset()
                     }) {
                         ZStack {
@@ -201,5 +207,6 @@ struct PaymentView: View {
 #Preview {
     TabView {
         PaymentView(walletData: .constant(WalletData()))
+            .modelContainer(for: WalletDataLog.self, inMemory: true)
     }
 }

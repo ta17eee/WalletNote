@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
     enum ActiveSheet: Identifiable {
@@ -94,6 +95,7 @@ struct HomeView: View {
 }
 
 private struct CashInitView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     @Binding var data: WalletData
     @State var inputtingData: WalletData = .init()
@@ -113,6 +115,11 @@ private struct CashInitView: View {
                     Button("確定") {
                         data = inputtingData
                         UserDefaults.standard.set(data.encode(), forKey: "walletData")
+                        
+                        let log = WalletDataLog(title: "リセット", type: "set", data: inputtingData)
+                        modelContext.insert(log)
+                        try? modelContext.save()
+                        
                         dismiss()
                     }
                     .padding(.horizontal)
@@ -133,6 +140,7 @@ private struct CashInitView: View {
 }
 
 private struct QuickNoteView: View {
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     @Binding var data: WalletData
     @State var title: String = ""
@@ -158,6 +166,11 @@ private struct QuickNoteView: View {
                     Button("確定") {
                         data = data.plus(diff)
                         UserDefaults.standard.set(data.encode(), forKey: "walletData")
+                        
+                        let log = WalletDataLog(title: title, type: "quick", data: diff)
+                        modelContext.insert(log)
+                        try? modelContext.save()
+                        
                         dismiss()
                     }
                     .padding(.horizontal)
@@ -193,6 +206,6 @@ private struct QuickNoteView: View {
 #Preview {
     TabView {
         HomeView(walletData: .constant(WalletData()))
-//        CashInitView(data: .constant(WalletData()))
+            .modelContainer(for: WalletDataLog.self, inMemory: true)
     }
 }

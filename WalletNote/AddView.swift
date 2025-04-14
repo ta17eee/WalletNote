@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddView: View {
+    @Environment(\.modelContext) private var modelContext
     @Binding var walletData: WalletData
     @State var title = ""
-    @State var inputingdata: WalletData = .init()
+    @State var inputtingData: WalletData = .init()
     
     var body: some View {
         ZStack {
@@ -33,10 +35,10 @@ struct AddView: View {
                     }
                     Spacer()
                         .frame(height: 16)
-                    CashView(data: $inputingdata, title: "入金")
+                    CashView(data: $inputtingData, title: "入金")
                     Spacer()
                         .frame(height: 16)
-                    CashInputView(data: $inputingdata)
+                    CashInputView(data: $inputtingData)
                     Spacer()
                         .frame(height: 16)
                     HStack {
@@ -59,8 +61,13 @@ struct AddView: View {
                         Spacer()
                             .frame(width: 16)
                         Button(action: {
-                            walletData = walletData.plus(inputingdata)
+                            walletData = walletData.plus(inputtingData)
                             UserDefaults.standard.set(walletData.encode(), forKey: "walletdata")
+                            
+                            let log = WalletDataLog(title: title, type: "plus", data: inputtingData)
+                            modelContext.insert(log)
+                            try? modelContext.save()
+                            
                             reset()
                         }) {
                             ZStack {
@@ -88,12 +95,13 @@ struct AddView: View {
     
     private func reset() {
         title = ""
-        inputingdata = .init()
+        inputtingData = .init()
     }
 }
 
 #Preview {
     TabView {
         AddView(walletData: .constant(WalletData()))
+            .modelContainer(for: WalletDataLog.self, inMemory: true)
     }
 }
