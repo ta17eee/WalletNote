@@ -23,7 +23,7 @@ struct ContentView: View {
                     Text("追加")
                 }
             }.tag(0)
-            PaymentView()
+            PaymentView(walletData: $walletData)
             .tabItem {
                 VStack {
                     Image(systemName: "tray.and.arrow.up.fill")

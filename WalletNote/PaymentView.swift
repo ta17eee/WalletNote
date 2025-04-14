@@ -8,13 +8,19 @@
 import SwiftUI
 
 struct PaymentView: View {
+    @Binding var walletData: WalletData
     @State var sum: String = ""
-    @State var pay: WalletData = .init()
+    @State var pay: WalletData
     @State var change: WalletData = .init()
     @State var title: String = ""
     @State var selectedTab: Int = 0
     @State var autoChange: Bool = true
     @FocusState var isTextFieldFocused: Bool
+    
+    init(walletData: Binding<WalletData>) {
+        _walletData = walletData
+        pay = .init(max: walletData.wrappedValue.getCashData())
+    }
     
     var body: some View {
         ZStack {
@@ -157,6 +163,8 @@ struct PaymentView: View {
                         .frame(width: 16)
                     Button(action: {
                         
+                        walletData = walletData.minus(pay).plus(change)
+                        UserDefaults.standard.set(walletData.encode(), forKey: "walletData")
                         reset()
                     }) {
                         ZStack {
@@ -191,6 +199,6 @@ struct PaymentView: View {
 
 #Preview {
     TabView {
-        PaymentView()
+        PaymentView(walletData: .constant(WalletData()))
     }
 }
