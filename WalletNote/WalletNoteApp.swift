@@ -10,32 +10,27 @@ import SwiftData
 
 @main
 struct WalletNoteApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
-    var savedWalletData: WalletData
+    let container: ModelContainer
+    let walletData: WalletData
     
     init() {
-        if let savedData = UserDefaults.standard.data(forKey: "walletData") {
-            savedWalletData = savedData.decodeToWalletData()
+        do {
+            container = try ModelContainer(for: WalletDataLog.self)
+        } catch {
+            fatalError("Failed to initialize ModelContainer")
+        }
+        
+        if let data = UserDefaults.standard.data(forKey: "walletData") {
+            walletData = data.decodeToWalletData()
         } else {
-            savedWalletData = .init()
+            walletData = .init()
         }
     }
-
+    
     var body: some Scene {
         WindowGroup {
-            ContentView(walletData: savedWalletData)
+            ContentView(walletData: walletData)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(container)
     }
 }

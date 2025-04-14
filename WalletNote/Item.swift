@@ -9,23 +9,15 @@ import Foundation
 import SwiftData
 
 @Model
-final class Item {
-    var timestamp: Date
-    
-    init(timestamp: Date) {
-        self.timestamp = timestamp
-    }
-}
-
-@Model
 final class WalletDataLog {
     @Attribute(.unique)
     private(set) var id: UUID = UUID()
     private(set) var timestamp: Date
+    private(set) var title: String
     private(set) var data: WalletData
     private(set) var type: String
     
-    init(timestamp: Date, type: String, data: WalletData) {
+    init(timestamp: Date, title: String, type: String, data: WalletData) {
         switch type {
         case "plus":
             self.type = "plus"
@@ -39,6 +31,7 @@ final class WalletDataLog {
             self.type = "unknown"
         }
         self.timestamp = timestamp
+        self.title = title
         self.data = data
     }
 }

@@ -9,8 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
     @State var selectedTab: Int = 2
     @State var walletData: WalletData
 
@@ -59,5 +57,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView(walletData: .init())
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: WalletDataLog.self, inMemory: true)
 }
