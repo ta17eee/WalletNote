@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddView: View {
-    @Binding var data: WalletData
+    @Binding var walletData: WalletData
     @State var title = ""
     @State var inputingdata: WalletData = .init()
     
@@ -41,8 +41,7 @@ struct AddView: View {
                         .frame(height: 16)
                     HStack {
                         Button(action: {
-                            title = ""
-                            inputingdata = .init()
+                            reset()
                         }) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
@@ -60,10 +59,9 @@ struct AddView: View {
                         Spacer()
                             .frame(width: 16)
                         Button(action: {
-                            data = data.plus(inputingdata)
-                            UserDefaults.standard.set(data.encode(), forKey: "walletdata")
-                            title = ""
-                            inputingdata = .init()
+                            walletData = walletData.plus(inputingdata)
+                            UserDefaults.standard.set(walletData.encode(), forKey: "walletdata")
+                            reset()
                         }) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
@@ -86,10 +84,15 @@ struct AddView: View {
             }
         }
     }
+    
+    private func reset() {
+        title = ""
+        inputingdata = .init()
+    }
 }
 
 #Preview {
     TabView {
-        AddView(data: .constant(WalletData()))
+        AddView(walletData: .constant(WalletData()))
     }
 }

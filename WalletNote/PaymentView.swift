@@ -138,10 +138,7 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        pay = .init()
-                        change = .init()
-                        sum = ""
-                        selectedTab = 0
+                        reset()
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
@@ -160,6 +157,7 @@ struct PaymentView: View {
                         .frame(width: 16)
                     Button(action: {
                         
+                        reset()
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
@@ -181,6 +179,13 @@ struct PaymentView: View {
                     .frame(maxHeight: 16)
             }
         }
+    }
+    
+    private func reset() {
+        pay = .init()
+        change = .init()
+        sum = ""
+        selectedTab = 0
     }
 }
 

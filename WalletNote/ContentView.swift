@@ -16,7 +16,7 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            AddView(data: $walletData)
+            AddView(walletData: $walletData)
             .tabItem {
                 VStack {
                     Image(systemName: "tray.and.arrow.down.fill")
