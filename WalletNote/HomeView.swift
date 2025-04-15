@@ -167,7 +167,9 @@ private struct QuickNoteView: View {
                     Spacer()
                     Button("確定") {
                         data = data.plus(diff)
-                        UserDefaults.standard.set(data.encode(), forKey: "walletData")
+                        
+                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
+                        sharedDefaults?.set(data.encode(), forKey: "walletData")
                         
                         let log = WalletDataLog(title: title, type: "quick", data: diff)
                         modelContext.insert(log)
