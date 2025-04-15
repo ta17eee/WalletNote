@@ -47,8 +47,7 @@ struct WalletNoteWidgetEntryView : View {
 
     var body: some View {
         VStack {
-            CashView(data: .constant(entry.walletData), title: "残高")
-                .scaleEffect(0.7)
+            CashView(data: .constant(entry.walletData), title: "残高", type: .widgetMedium)
         }
     }
 }
@@ -59,7 +58,7 @@ struct WalletNoteWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             WalletNoteWidgetEntryView(entry: entry)
-                .containerBackground(.fill.tertiary, for: .widget)
+                .containerBackground(Color(red: 1.0, green: 206/255, blue: 158/255), for: .widget)
         }
         .supportedFamilies([.systemMedium])
     }

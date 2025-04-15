@@ -7,15 +7,58 @@
 
 import SwiftUI
 
+enum DisplayType {
+    case nomal
+    case slim
+    case widgetMedium
+    case widgetLarge
+    
+    func getBaseSize() -> CGFloat {
+        switch self {
+        case .nomal, .slim, .widgetLarge:
+            return 32
+        case .widgetMedium:
+            return 24
+        }
+    }
+}
+
 struct CashView: View {
-    @Binding var data: WalletData
-    let title: String
+    @Binding private var data: WalletData
+    private let title: String
+    private let type: DisplayType
+    private let baseSize: CGFloat
+    private let spaceSize: CGFloat
+    
+    init(data: Binding<WalletData>, title: String, type: DisplayType = .nomal) {
+        _data = data
+        self.title = title
+        self.type = type
+        baseSize = type.getBaseSize()
+        switch type {
+        case .nomal, .widgetLarge:
+            spaceSize = 16
+        case .slim:
+            spaceSize = 8
+        case .widgetMedium:
+            spaceSize = 4
+        }
+    }
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
-                .frame(height: 272)
+            switch type {
+            case .nomal:
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
+                    .frame(height: 272)
+            case .slim:
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
+                    .frame(height: 272) // unfixed
+            case .widgetMedium, .widgetLarge:
+                Color.clear //dummy
+            }
             VStack {
                 HStack {
                     Spacer()
@@ -23,7 +66,7 @@ struct CashView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.white)
-                            .frame(height: 64)
+                            .frame(height: baseSize + spaceSize * 2)
                         HStack {
                             Spacer()
                                 .frame(width: 16)
@@ -43,20 +86,21 @@ struct CashView: View {
                     Spacer()
                         .frame(width: 16)
                 }
+                Spacer()
+                    .frame(height: spaceSize)
                 HStack {
                     Spacer()
                         .frame(width: 16)
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-            //                .stroke(Color.gray, lineWidth: 2)
                             .fill(Color.white)
-                            .frame(height: 160)
+                            .frame(height: baseSize * 3 + spaceSize * 4)
                         HStack {
                             Spacer()
                                 .frame(width: 16)
                             VStack {
                                 HStack {
-                                    Bill10000()
+                                    Bill10000(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("× " + String(data.getCashAmount(10000)))
@@ -65,9 +109,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(10000) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Bill5000()
+                                    Bill5000(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("× " + String(data.getCashAmount(5000)))
@@ -76,9 +120,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(5000) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Bill1000()
+                                    Bill1000(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("× " + String(data.getCashAmount(1000)))
@@ -89,12 +133,12 @@ struct CashView: View {
                             }
                             Spacer()
                             Rectangle()
-                                .frame(width: 2, height: 160)
+                                .frame(width: 1, height: baseSize * 3 + spaceSize * 4)
                                 .foregroundStyle(.gray)
                             Spacer()
                             VStack {
                                 HStack {
-                                    Coin500()
+                                    Coin500(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("× " + String(data.getCashAmount(500)))
@@ -103,9 +147,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(500) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Coin100()
+                                    Coin100(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("x " + String(data.getCashAmount(100)))
@@ -114,10 +158,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(100) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Coin50()
-                                    .frame(width: 32, height: 32)
+                                    Coin50(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("x " + String(data.getCashAmount(50)))
@@ -128,12 +171,12 @@ struct CashView: View {
                             }
                             Spacer()
                             Rectangle()
-                                .frame(width: 2, height: 160)
+                                .frame(width: 1, height: baseSize * 3 + spaceSize * 4)
                                 .foregroundStyle(.gray)
                             Spacer()
                             VStack {
                                 HStack {
-                                    Coin10()
+                                    Coin10(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("x " + String(data.getCashAmount(10)))
@@ -142,9 +185,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(10) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Coin5()
+                                    Coin5(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("x " + String(data.getCashAmount(5)))
@@ -153,9 +196,9 @@ struct CashView: View {
                                 }
                                 .opacity(data.getCashAmount(5) == 0 ? 0.25 : 1)
                                 Spacer()
-                                    .frame(height: 16)
+                                    .frame(height: spaceSize)
                                 HStack {
-                                    Coin1()
+                                    Coin1(size: baseSize)
                                     Spacer()
                                         .frame(width: 8)
                                     Text("x " + String(data.getCashAmount(1)))
@@ -331,128 +374,182 @@ struct CashInputView: View {
 }
 
 private struct Bill10000: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(Color(red: 248/255, green: 181/255, blue: 0.0))
-                .frame(width: 64, height: 32)
+                .frame(width: size * 2, height: size)
             Text("10000")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 64, height: 32)
+        .frame(width: size * 2, height: size)
     }
 }
 
 private struct Bill5000: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(Color(red: 196/255, green: 163/255, blue: 191/255))
-                .frame(width: 64, height: 32)
+                .frame(width: size * 2, height: size)
             Text("5000")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 64, height: 32)
+        .frame(width: size * 2, height: size)
     }
 }
 
 private struct Bill1000: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Rectangle()
                 .fill(Color(red: 128/255, green: 171/255, blue: 169/255))
-                .frame(width: 64, height: 32)
+                .frame(width: size * 2, height: size)
             Text("1000")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 64, height: 32)
+        .frame(width: size * 2, height: size)
     }
 }
 
 private struct Coin500: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 255/255, green: 217/255, blue: 0/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("500")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2 - 1, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
 private struct Coin100: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 192/255, green: 198/255, blue: 201/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("100")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
 private struct Coin50: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 175/255, green: 175/255, blue: 176/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("50")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
 private struct Coin10: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 184/255, green: 115/255, blue: 51/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("10")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
 private struct Coin5: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 200/255, green: 153/255, blue: 50/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("5")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
 private struct Coin1: View {
+    private let size: CGFloat
+    
+    init(size: CGFloat = 32) {
+        self.size = size
+    }
+    
     var body: some View {
         ZStack {
             Circle()
                 .fill(Color(red: 230/255, green: 230/255, blue: 250/255))
-                .frame(width: 32, height: 32)
+                .frame(width: size, height: size)
             Text("1")
-                .font(.system(size: 16, weight: .bold, design: .default))
+                .font(.system(size: size / 2, weight: .bold, design: .default))
                 .foregroundStyle(.black)
         }
-        .frame(width: 32, height: 32)
+        .frame(width: size, height: size)
     }
 }
 
@@ -468,6 +565,10 @@ private struct removeCashIcon: View {
 }
 
 #Preview {
+    ZStack {
+        Color(red: 1.0, green: 206/255, blue: 158/255)
+        CashView(data: .constant(WalletData()), title: "残高", type: .widgetMedium)
+    }
     HStack {
         Spacer()
             .frame(width: 16)
