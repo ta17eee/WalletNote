@@ -164,10 +164,15 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        walletData = walletData.minus(pay).plus(change)
-                        UserDefaults.standard.set(walletData.encode(), forKey: "walletData")
+                        walletData = walletData.minus(pay)
+                        // App Groupに保存するように変更
+                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
+                        sharedDefaults?.set(walletData.encode(), forKey: "walletData")
                         
-                        let log = WalletDataLog(title: title, type: "pay", data: change.minus(pay))
+                        if (autoChange) {
+                            change = walletData.calcChange(sum)
+                        }
+                        let log = WalletDataLog(title: title, type: "pay", data: pay)
                         modelContext.insert(log)
                         try? modelContext.save()
                         

@@ -114,7 +114,9 @@ private struct CashInitView: View {
                     Spacer()
                     Button("確定") {
                         data = inputtingData
-                        UserDefaults.standard.set(data.encode(), forKey: "walletData")
+                        // App Groupに保存するように変更
+                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
+                        sharedDefaults?.set(data.encode(), forKey: "walletData")
                         
                         let log = WalletDataLog(title: "リセット", type: "set", data: inputtingData)
                         modelContext.insert(log)

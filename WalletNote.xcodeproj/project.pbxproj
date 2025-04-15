@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6DDC3C0D2DAD10B500545B4B /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DDC3C0C2DAD10B500545B4B /* WidgetKit.framework */; };
+		6DDC3C0F2DAD10B500545B4B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DDC3C0E2DAD10B500545B4B /* SwiftUI.framework */; };
+		6DDC3C1E2DAD10B700545B4B /* WalletNoteWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6DDC3C0A2DAD10B500545B4B /* WalletNoteWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6D5A40722D51F1B70034EDC2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,17 +27,63 @@
 			remoteGlobalIDString = 6D5A405E2D51F1B60034EDC2;
 			remoteInfo = WalletNote;
 		};
+		6DDC3C1C2DAD10B700545B4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6D5A40572D51F1B60034EDC2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6DDC3C092DAD10B500545B4B;
+			remoteInfo = WalletNoteWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6DDC3C1F2DAD10B700545B4B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6DDC3C1E2DAD10B700545B4B /* WalletNoteWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6D5A405F2D51F1B60034EDC2 /* WalletNote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WalletNote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D5A40712D51F1B70034EDC2 /* WalletNoteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalletNoteTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D5A407B2D51F1B70034EDC2 /* WalletNoteUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WalletNoteUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DDC3C0A2DAD10B500545B4B /* WalletNoteWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WalletNoteWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DDC3C0C2DAD10B500545B4B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		6DDC3C0E2DAD10B500545B4B /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		6DDC3C272DAE029800545B4B /* WalletNoteWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = WalletNoteWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6DDC3C222DAD10B700545B4B /* Exceptions for "WalletNoteWidget" folder in "WalletNoteWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */;
+		};
+		6DDC3C252DAE01FA00545B4B /* Exceptions for "WalletNote" folder in "WalletNoteWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CashView.swift,
+				Item.swift,
+			);
+			target = 6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6D5A40612D51F1B60034EDC2 /* WalletNote */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6DDC3C252DAE01FA00545B4B /* Exceptions for "WalletNote" folder in "WalletNoteWidgetExtension" target */,
+			);
 			path = WalletNote;
 			sourceTree = "<group>";
 		};
@@ -43,6 +95,14 @@
 		6D5A407E2D51F1B70034EDC2 /* WalletNoteUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = WalletNoteUITests;
+			sourceTree = "<group>";
+		};
+		6DDC3C102DAD10B500545B4B /* WalletNoteWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6DDC3C222DAD10B700545B4B /* Exceptions for "WalletNoteWidget" folder in "WalletNoteWidgetExtension" target */,
+			);
+			path = WalletNoteWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -69,15 +129,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6DDC3C072DAD10B500545B4B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6DDC3C0F2DAD10B500545B4B /* SwiftUI.framework in Frameworks */,
+				6DDC3C0D2DAD10B500545B4B /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		6D5A40562D51F1B60034EDC2 = {
 			isa = PBXGroup;
 			children = (
+				6DDC3C272DAE029800545B4B /* WalletNoteWidgetExtension.entitlements */,
 				6D5A40612D51F1B60034EDC2 /* WalletNote */,
 				6D5A40742D51F1B70034EDC2 /* WalletNoteTests */,
 				6D5A407E2D51F1B70034EDC2 /* WalletNoteUITests */,
+				6DDC3C102DAD10B500545B4B /* WalletNoteWidget */,
+				6DDC3C0B2DAD10B500545B4B /* Frameworks */,
 				6D5A40602D51F1B60034EDC2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -88,8 +160,18 @@
 				6D5A405F2D51F1B60034EDC2 /* WalletNote.app */,
 				6D5A40712D51F1B70034EDC2 /* WalletNoteTests.xctest */,
 				6D5A407B2D51F1B70034EDC2 /* WalletNoteUITests.xctest */,
+				6DDC3C0A2DAD10B500545B4B /* WalletNoteWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6DDC3C0B2DAD10B500545B4B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6DDC3C0C2DAD10B500545B4B /* WidgetKit.framework */,
+				6DDC3C0E2DAD10B500545B4B /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -102,10 +184,12 @@
 				6D5A405B2D51F1B60034EDC2 /* Sources */,
 				6D5A405C2D51F1B60034EDC2 /* Frameworks */,
 				6D5A405D2D51F1B60034EDC2 /* Resources */,
+				6DDC3C1F2DAD10B700545B4B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6DDC3C1D2DAD10B700545B4B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6D5A40612D51F1B60034EDC2 /* WalletNote */,
@@ -163,6 +247,28 @@
 			productReference = 6D5A407B2D51F1B70034EDC2 /* WalletNoteUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6DDC3C232DAD10B700545B4B /* Build configuration list for PBXNativeTarget "WalletNoteWidgetExtension" */;
+			buildPhases = (
+				6DDC3C062DAD10B500545B4B /* Sources */,
+				6DDC3C072DAD10B500545B4B /* Frameworks */,
+				6DDC3C082DAD10B500545B4B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6DDC3C102DAD10B500545B4B /* WalletNoteWidget */,
+			);
+			name = WalletNoteWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = WalletNoteWidgetExtension;
+			productReference = 6DDC3C0A2DAD10B500545B4B /* WalletNoteWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -170,7 +276,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					6D5A405E2D51F1B60034EDC2 = {
@@ -183,6 +289,9 @@
 					6D5A407A2D51F1B70034EDC2 = {
 						CreatedOnToolsVersion = 16.2;
 						TestTargetID = 6D5A405E2D51F1B60034EDC2;
+					};
+					6DDC3C092DAD10B500545B4B = {
+						CreatedOnToolsVersion = 16.3;
 					};
 				};
 			};
@@ -203,6 +312,7 @@
 				6D5A405E2D51F1B60034EDC2 /* WalletNote */,
 				6D5A40702D51F1B70034EDC2 /* WalletNoteTests */,
 				6D5A407A2D51F1B70034EDC2 /* WalletNoteUITests */,
+				6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +333,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6D5A40792D51F1B70034EDC2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6DDC3C082DAD10B500545B4B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +370,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6DDC3C062DAD10B500545B4B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +389,11 @@
 			isa = PBXTargetDependency;
 			target = 6D5A405E2D51F1B60034EDC2 /* WalletNote */;
 			targetProxy = 6D5A407C2D51F1B70034EDC2 /* PBXContainerItemProxy */;
+		};
+		6DDC3C1D2DAD10B700545B4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */;
+			targetProxy = 6DDC3C1C2DAD10B700545B4B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -393,6 +522,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WalletNote/WalletNote.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WalletNote/Preview Content\"";
@@ -426,6 +556,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = WalletNote/WalletNote.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WalletNote/Preview Content\"";
@@ -522,6 +653,64 @@
 			};
 			name = Release;
 		};
+		6DDC3C202DAD10B700545B4B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WalletNoteWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5JP8QJ77KT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WalletNoteWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WalletNoteWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ta17eee.WalletNote.WalletNoteWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6DDC3C212DAD10B700545B4B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = WalletNoteWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5JP8QJ77KT;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WalletNoteWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = WalletNoteWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ta17eee.WalletNote.WalletNoteWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -557,6 +746,15 @@
 			buildConfigurations = (
 				6D5A408C2D51F1B70034EDC2 /* Debug */,
 				6D5A408D2D51F1B70034EDC2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6DDC3C232DAD10B700545B4B /* Build configuration list for PBXNativeTarget "WalletNoteWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6DDC3C202DAD10B700545B4B /* Debug */,
+				6DDC3C212DAD10B700545B4B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

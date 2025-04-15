@@ -62,7 +62,9 @@ struct AddView: View {
                             .frame(width: 16)
                         Button(action: {
                             walletData = walletData.plus(inputtingData)
-                            UserDefaults.standard.set(walletData.encode(), forKey: "walletdata")
+                            // App Groupに保存するように変更
+                            let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
+                            sharedDefaults?.set(walletData.encode(), forKey: "walletData")
                             
                             let log = WalletDataLog(title: title, type: "plus", data: inputtingData)
                             modelContext.insert(log)
