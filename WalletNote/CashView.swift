@@ -21,6 +21,16 @@ enum DisplayType {
             return 24
         }
     }
+    func getSpaceSize() -> CGFloat {
+        switch self {
+        case .nomal, .widgetLarge:
+            return 16
+        case .slim:
+            return 8
+        case .widgetMedium:
+            return 4
+        }
+    }
 }
 
 struct CashView: View {
@@ -35,14 +45,7 @@ struct CashView: View {
         self.title = title
         self.type = type
         baseSize = type.getBaseSize()
-        switch type {
-        case .nomal, .widgetLarge:
-            spaceSize = 16
-        case .slim:
-            spaceSize = 8
-        case .widgetMedium:
-            spaceSize = 4
-        }
+        spaceSize = type.getSpaceSize()
     }
     
     var body: some View {
