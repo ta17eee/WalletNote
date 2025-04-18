@@ -227,7 +227,7 @@ private struct CalendarView: View {
         let target = calendar.date(byAdding: .month, value: offset, to: now)!
         
         // 月の日数と最初の曜日を計算
-        let daysCount = calendar.daysInMonth(for: target)!
+        let daysCount = calendar.daysInMonth(for: target)
         let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: target))!
         let firstDay = calendar.component(.weekday, from: firstDayOfMonth)
         
@@ -256,8 +256,25 @@ private struct CalendarView: View {
 }
 
 extension Calendar {
-    func daysInMonth(for date:Date) -> Int? {
-        return range(of: .day, in: .month, for: date)?.count
+    func daysInMonth(for date:Date) -> Int {
+        if let days = range(of: .day, in: .month, for: date)?.count {
+            return days
+        }
+        
+        let year = component(.year, from: date)
+        let month = component(.month, from: date)
+        
+        switch month {
+        case 1, 3, 5, 7, 8, 10, 12:
+            return 31
+        case 4, 6, 9, 11:
+            return 30
+        case 2:
+            let isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
+            return isLeapYear ? 29 : 28
+        default:
+            return 30 // 不正な月の場合のフォールバック
+        }
     }
 }
 
