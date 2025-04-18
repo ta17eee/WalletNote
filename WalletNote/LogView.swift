@@ -78,8 +78,6 @@ struct LogView: View {
 }
 
 private struct CalendarView: View {
-    let today = CalendarData()
-    let columns: [GridItem] = Array(repeating: .init(.fixed(48)), count: 7)
     @State var monthOffset: Int = 0
     @State var isPickSheetPresented: Bool = false
     
@@ -149,46 +147,59 @@ private struct CalendarView: View {
             .fontWeight(.bold)
             .font(.largeTitle)
             HStack {
+                Spacer()
+                    .frame(width: 8)
                 ForEach(Calendar.current.shortWeekdaySymbols, id: \.self) { weekday in
-                    if weekday == "Sun" {
-                        Text(weekday)
-                            .foregroundStyle(Color.red)
+                    ZStack {
+                        Color.clear // dummy
+                        if weekday == "Sun" {
+                            Text(weekday)
+                                .foregroundStyle(Color.red)
+                        }
+                        else if weekday == "Sat" {
+                            Text(weekday)
+                                .foregroundStyle(Color.blue)
+                        }
+                        else {
+                            Text(weekday)
+                        }
                     }
-                    else if weekday == "Sat" {
-                        Text(weekday)
-                            .foregroundStyle(Color.blue)
-                    }
-                    else {
-                        Text(weekday)
-                    }
+                    .frame(height: 32, alignment: .center)
+                    Spacer()
+                        .frame(width: 8)
                 }
-                .frame(width: 48, height: 32, alignment: .center)
             }
-            LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(today.getMonthCalendar(offset: monthOffset), id: \.self) { day in
-                    if day != 0 {
-                        Button(action: {
-                            
-                        }) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color.white)
-                                    .stroke(Color.gray, lineWidth: 1)
-                                    .frame(width: 48, height: 64)
-                                VStack {
-                                    Text("\(day)")
-                                        .foregroundStyle(Color.black)
-                                    
-                                    Spacer(minLength: 0)
+            ForEach(getMonthCalendar(offset: monthOffset), id: \.self) { week in
+                HStack {
+                    Spacer()
+                        .frame(width: 8)
+                    ForEach(week, id: \.self) { day in
+                        if day != 0 {
+                            Button(action: {
+                                
+                            }) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.white)
+                                        .stroke(Color.gray, lineWidth: 1)
+                                    VStack {
+                                        Text("\(day)")
+                                            .foregroundStyle(Color.black)
+                                        
+                                        Spacer(minLength: 0)
+                                    }
                                 }
                             }
                         }
-                    }
-                    else {
-                        Text("")
-                            .frame(height: 64)
+                        else {
+                            Color.clear //dummy
+                        }
+                        Spacer()
+                            .frame(width: 8)
                     }
                 }
+                Spacer()
+                    .frame(height: 8)
             }
             Spacer()
         }
@@ -197,56 +208,50 @@ private struct CalendarView: View {
                 .presentationDetents([.height(312)])
         }
     }
+    
     private func getTargetMonth() -> String{
-        let target = Calendar.current.date(byAdding: .month, value: monthOffset, to: today.now)!
+        let now = Date()
+        let target = Calendar.current.date(byAdding: .month, value: monthOffset, to: now)!
         return String(Calendar.current.component(.month, from: target))
     }
+    
     private func getTargetYear() -> String {
-        let target = Calendar.current.date(byAdding: .month, value: monthOffset, to: today.now)!
+        let now = Date()
+        let target = Calendar.current.date(byAdding: .month, value: monthOffset, to: now)!
         return String(Calendar.current.component(.year, from: target))
     }
-
     
-    struct CalendarData {
-        let now = Date()
+    private func getMonthCalendar(offset: Int) -> [[Int]] {
         let calendar = Calendar.current
-        let year: Int
-        let month: Int
-        let day: Int
-        let weekday: Int
-        let startWeekday: Int
-        let daysInMonth: Int
+        let now = Date()
+        let target = calendar.date(byAdding: .month, value: offset, to: now)!
         
-        init() {
-            year = calendar.component(.year, from: now)
-            month = calendar.component(.month, from: now)
-            day = calendar.component(.day, from: now)
-            weekday = calendar.component(.weekday, from: now)
-            let x = (weekday - day % 7) % 7
-            startWeekday = x >= 0 ? x + 1 : x + 8
-            daysInMonth = calendar.daysInMonth(for: now)!
-        }
+        // 月の日数と最初の曜日を計算
+        let daysCount = calendar.daysInMonth(for: target)!
+        let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: target))!
+        let firstDay = calendar.component(.weekday, from: firstDayOfMonth)
         
-        func getMonthCalendar(offset: Int) -> [Int] {
-            var dayCalendar: [Int] = []
-            let target = calendar.date(byAdding: .month, value: offset, to: now)!
-            let daysCount = calendar.daysInMonth(for: target)!
-            let weekday = calendar.component(.weekday, from: target)
-            let x = (weekday - day % 7) % 7
-            let start = x >= 0 ? x + 1 : x + 8
-            for i in 1...42 {
-                if i < start {
-                    dayCalendar.append(0)
-                }
-                else if i < start + daysCount {
-                    dayCalendar.append(i - start + 1)
-                }
-                else {
-                    dayCalendar.append(0)
+        // 2次元配列構築
+        var result: [[Int]] = []
+        var day = 1
+        
+        // 6週間分のカレンダーを生成
+        for weekRow in 0..<6 {
+            var week: [Int] = []
+            
+            // 曜日ごとに日付または0を設定
+            for weekdayColumn in 1...7 {
+                let isEmptyDay = (weekRow == 0 && weekdayColumn < firstDay) || day > daysCount
+                week.append(isEmptyDay ? 0 : day)
+                if !isEmptyDay {
+                    day += 1
                 }
             }
-            return dayCalendar
+
+            result.append(week)
         }
+        
+        return result
     }
 }
 
