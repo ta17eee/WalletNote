@@ -51,14 +51,10 @@ struct CashView: View {
     var body: some View {
         ZStack {
             switch type {
-            case .nomal:
+            case .nomal, .slim:
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
-                    .frame(height: 272)
-            case .slim:
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
-                    .frame(height: 272) // unfixed
+                    .frame(height: baseSize * 4 + spaceSize * 7 + 32)
             case .widgetMedium, .widgetLarge:
                 Color.clear //dummy
             }
