@@ -14,32 +14,37 @@ final class WalletDataLog {
     private(set) var id: UUID = UUID()
     private(set) var timestamp: Date
     private(set) var title: String
-    private(set) var data: WalletData
+    private(set) var cashValues: [Int: Int]
+    private(set) var totalValue: Int
     private(set) var type: String
     
     init(timestamp: Date = Date(), title: String, type: String, data: WalletData) {
         switch type {
-        case "plus":
-            self.type = "plus"
-        case "pay":
-            self.type = "pay"
-        case "set":
-            self.type = "set"
-        case "quick":
-            self.type = "quick"
+        case "plus", "pay", "set", "quick":
+            self.type = type
         default:
             self.type = "unknown"
         }
         self.timestamp = timestamp
         self.title = title
-        self.data = data
+        self.cashValues = data.getCashData().getPrimitiveValue()
+        self.totalValue = data.value
+    }
+    
+    func toWalletData() -> WalletData {
+        var walletData = WalletData()
+        var cashData = WalletData.CashData()
+        cashData.setfromPrimitiveValue(cashValues)
+        walletData.setCashDataDirectly(cashData)
+        return walletData
     }
 }
 
 struct WalletData: Codable {
     
     struct CashData: Codable {
-        private var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0]
+        private var denomination: [Int] = [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] //JPY
+        private var cashData: [Int: Int] = [10000: 0, 5000: 0, 1000: 0, 500: 0, 100: 0, 50: 0, 10: 0, 5: 0, 1: 0] //JPY
         
         func getCashAmount(_ cash: Int) -> Int {
             guard let amount = cashData[cash] else {
@@ -53,6 +58,21 @@ struct WalletData: Codable {
                 sum += key * value
             }
             return sum
+        }
+        func getDenomination() -> [Int] {
+            return denomination
+        }
+        func getPrimitiveValue() -> [Int: Int] {
+            return cashData
+        }
+        mutating func setfromPrimitiveValue(_ value: [Int: Int]) {
+            for cash in denomination {
+                if let value = value[cash] {
+                    cashData[cash] = value
+                } else {
+                    cashData[cash] = 0
+                }
+            }
         }
         func reverse() -> CashData {
             var result: CashData = .init()
@@ -76,7 +96,6 @@ struct WalletData: Codable {
     }
     
     var value: Int = 0
-    private let cashDenominations: [Int]
     private var cashData: CashData = .init()
     private let min: CashData?
     private let max: CashData?
@@ -84,7 +103,6 @@ struct WalletData: Codable {
     init(min: CashData? = nil, max: CashData? = nil) {
         self.min = min?.reverse()
         self.max = max
-        cashDenominations = [10000, 5000, 1000, 500, 100, 50, 10, 5, 1] //JPY
     }
     
     private mutating func calcValue() {
@@ -95,6 +113,10 @@ struct WalletData: Codable {
     }
     func getCashData() -> CashData {
         return cashData
+    }
+    mutating func setCashDataDirectly(_ data: CashData) {
+        cashData = data
+        calcValue()
     }
     func getCashAmount(_ cash: Int) -> Int {
         return cashData.getCashAmount(cash)
@@ -110,7 +132,7 @@ struct WalletData: Codable {
             return WalletData()
         }
         var changeData = WalletData()
-        for cash in cashDenominations {
+        for cash in cashData.getDenomination() {
             changeData.cashData.setCash(cash, changeValue / cash)
             changeValue %= cash
         }
@@ -132,7 +154,7 @@ struct WalletData: Codable {
         calcValue()
     }
     func payable(payment: WalletData) -> Bool {
-        for cash in cashDenominations {
+        for cash in cashData.getDenomination() {
             if self.cashData.getCashAmount(cash) < payment.cashData.getCashAmount(cash) {
                 return false
             }
@@ -141,7 +163,7 @@ struct WalletData: Codable {
     }
     func plus(_ adder: WalletData) -> WalletData {
         var result: WalletData = self
-        for cash in cashDenominations {
+        for cash in cashData.getDenomination() {
             _ = result.cashData.updateCash(cash, adder.cashData.getCashAmount(cash))
         }
         result.calcValue()
@@ -150,7 +172,7 @@ struct WalletData: Codable {
     func minus(_ minus: WalletData) -> WalletData {
         var result: WalletData = self
         if (result.payable(payment: minus)) {
-            for cash in cashDenominations {
+            for cash in cashData.getDenomination() {
                 _ = result.cashData.updateCash(cash, -minus.cashData.getCashAmount(cash))
             }
             result.calcValue()

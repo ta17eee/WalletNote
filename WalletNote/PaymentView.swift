@@ -173,7 +173,8 @@ struct PaymentView: View {
                         let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
                         sharedDefaults?.set(walletData.encode(), forKey: "walletData")
                         
-                        let log = WalletDataLog(title: title, type: "pay", data: change.minus(pay))
+                        let paymentData = change.minus(pay)
+                        let log = WalletDataLog(title: title, type: "pay", data: paymentData)
                         modelContext.insert(log)
                         try? modelContext.save()
                         

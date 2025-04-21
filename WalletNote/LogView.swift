@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LogView: View {
     @State var selectedTab: Int = 0
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         ZStack {
@@ -66,7 +68,7 @@ struct LogView: View {
                 TabView(selection: $selectedTab) {
                     CalendarView()
                         .tag(0)
-                    Text("ListView")
+                    ListView()
                         .tag(1)
                     Text("SumupView")
                         .tag(2)
@@ -323,8 +325,196 @@ private struct MonthPickView: View {
     }
 }
 
+private struct ListView: View {
+    @Query(sort: \WalletDataLog.timestamp, order: .reverse, animation: .default) private var logs: [WalletDataLog]
+    @Environment(\.modelContext) private var modelContext
+    @State private var searchText = ""
+    @State private var hasError = false
+    @State private var errorMessage = ""
+    
+    var body: some View {
+        VStack {
+            SearchBar(text: $searchText)
+                .padding(.horizontal)
+            
+            if hasError {
+                VStack {
+                    Spacer()
+                    Text("エラーが発生しました")
+                        .font(.headline)
+                        .foregroundColor(.red)
+                    Text(errorMessage)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding()
+                    Button("再試行") {
+                        hasError = false
+                        errorMessage = ""
+                    }
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    Spacer()
+                }
+            } else if logs.isEmpty {
+                VStack {
+                    Spacer()
+                    Text("履歴がありません")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                    Spacer()
+                }
+            } else {
+                SafeLogsList(logs: filteredLogs)
+            }
+        }
+        .background(Color(red: 1.0, green: 1.0, blue: 188/255))
+        .onAppear {
+            do {
+                try modelContext.save()
+            } catch {
+                hasError = true
+                errorMessage = error.localizedDescription
+                print("SwiftData Error: \(error)")
+            }
+        }
+    }
+    
+    private var filteredLogs: [WalletDataLog] {
+        if searchText.isEmpty {
+            return logs
+        } else {
+            return logs.filter { 
+                $0.title.localizedCaseInsensitiveContains(searchText) 
+            }
+        }
+    }
+}
+
+private struct SafeLogsList: View {
+    let logs: [WalletDataLog]
+    
+    var body: some View {
+        List {
+            ForEach(logs) { log in
+                LogRow(log: log)
+            }
+        }
+        .listStyle(PlainListStyle())
+    }
+}
+
+private struct LogRow: View {
+    let log: WalletDataLog
+    
+    var body: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Text(log.title)
+                    .font(.headline)
+                Spacer()
+                Text(formattedDate(log.timestamp))
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+            
+            HStack {
+                typeIcon(for: log.type)
+                Text(typeText(for: log.type))
+                    .font(.subheadline)
+                Spacer()
+                Text(formatAmount(log.totalValue))
+                    .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                    .font(.title3)
+            }
+            .padding(.top, 2)
+        }
+        .padding(.vertical, 4)
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    private func formatAmount(_ amount: Int) -> String {
+        return String.localizedStringWithFormat("%+d円", amount)
+    }
+    
+    private func typeIcon(for type: String) -> some View {
+        let systemName: String
+        let color: Color
+        
+        switch type {
+        case "plus":
+            systemName = "arrow.down.circle"
+            color = .green
+        case "pay":
+            systemName = "arrow.up.circle"
+            color = .red
+        case "set":
+            systemName = "arrow.clockwise.circle"
+            color = .blue
+        case "quick":
+            systemName = "pencil.circle"
+            color = .orange
+        default:
+            systemName = "questionmark.circle"
+            color = .gray
+        }
+        
+        return Image(systemName: systemName)
+            .foregroundColor(color)
+    }
+    
+    private func typeText(for type: String) -> String {
+        switch type {
+        case "plus":
+            return "入金"
+        case "pay":
+            return "支払い"
+        case "set":
+            return "残高設定"
+        case "quick":
+            return "クイックメモ"
+        default:
+            return "不明"
+        }
+    }
+}
+
+struct SearchBar: View {
+    @Binding var text: String
+    
+    var body: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            
+            TextField("検索", text: $text)
+                .foregroundColor(.primary)
+            
+            if !text.isEmpty {
+                Button(action: {
+                    text = ""
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
+            }
+        }
+        .padding(8)
+        .background(Color(.systemBackground))
+        .cornerRadius(10)
+    }
+}
+
 #Preview {
     TabView {
         LogView()
+            .modelContainer(for: WalletDataLog.self, inMemory: true)
     }
 }
