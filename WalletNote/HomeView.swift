@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct HomeView: View {
-    enum ActiveSheet: Identifiable {
+    private enum ActiveSheet: Identifiable {
         case initView, quickView
         
         var id: Int {
@@ -18,7 +18,6 @@ struct HomeView: View {
     }
     
     @Binding var walletData: WalletData
-    @State private var isPresented: Bool = false
     @State private var activeSheet: ActiveSheet?
     
     var body: some View {
