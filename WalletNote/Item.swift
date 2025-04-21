@@ -14,17 +14,12 @@ final class WalletDataLog {
     private(set) var id: UUID = UUID()
     private(set) var timestamp: Date
     private(set) var title: String
-    private(set) var cashValues: [Int: Int]
+    private var cashValues: [Int: Int]
     private(set) var totalValue: Int
-    private(set) var type: String
+    private var type: String
     
-    init(timestamp: Date = Date(), title: String, type: String, data: WalletData) {
-        switch type {
-        case "plus", "pay", "set", "quick":
-            self.type = type
-        default:
-            self.type = "unknown"
-        }
+    init(timestamp: Date = Date(), title: String, type: DataType, data: WalletData) {
+        self.type = type.rawValue
         self.timestamp = timestamp
         self.title = title
         self.cashValues = data.getCashData().getPrimitiveValue()
@@ -38,6 +33,28 @@ final class WalletDataLog {
         walletData.setCashDataDirectly(cashData)
         return walletData
     }
+    func getDataType() -> DataType {
+        switch type {
+        case DataType.plus.rawValue:
+            return .plus
+        case DataType.pay.rawValue:
+            return .pay
+        case DataType.reset.rawValue:
+            return .reset
+        case DataType.quick.rawValue:
+            return .quick
+        default :
+            return .unknown
+        }
+    }
+}
+
+enum DataType: String {
+    case plus
+    case pay
+    case reset
+    case quick
+    case unknown
 }
 
 struct WalletData: Codable {

@@ -66,7 +66,7 @@ struct AddView: View {
                             let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
                             sharedDefaults?.set(walletData.encode(), forKey: "walletData")
                             
-                            let log = WalletDataLog(title: title, type: "plus", data: inputtingData)
+                            let log = WalletDataLog(title: title, type: .plus, data: inputtingData)
                             modelContext.insert(log)
                             try? modelContext.save()
                             

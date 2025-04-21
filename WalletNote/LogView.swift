@@ -444,24 +444,24 @@ private struct LogRow: View {
         return String.localizedStringWithFormat("%+d円", amount)
     }
     
-    private func typeIcon(for type: String) -> some View {
+    private func typeIcon(for type: DataType) -> some View {
         let systemName: String
         let color: Color
         
         switch type {
-        case "plus":
+        case .plus:
             systemName = "arrow.down.circle"
             color = .green
-        case "pay":
+        case .pay:
             systemName = "arrow.up.circle"
             color = .red
-        case "set":
+        case .reset:
             systemName = "arrow.clockwise.circle"
             color = .blue
-        case "quick":
+        case .quick:
             systemName = "pencil.circle"
             color = .orange
-        default:
+        case .unknown:
             systemName = "questionmark.circle"
             color = .gray
         }
@@ -470,23 +470,23 @@ private struct LogRow: View {
             .foregroundColor(color)
     }
     
-    private func typeText(for type: String) -> String {
+    private func typeText(for type: DataType) -> String {
         switch type {
-        case "plus":
+        case .plus:
             return "入金"
-        case "pay":
+        case .pay:
             return "支払い"
-        case "set":
+        case .reset:
             return "残高設定"
-        case "quick":
+        case .quick:
             return "クイックメモ"
-        default:
+        case .unknown:
             return "不明"
         }
     }
 }
 
-struct SearchBar: View {
+private struct SearchBar: View {
     @Binding var text: String
     
     var body: some View {

@@ -117,7 +117,7 @@ private struct CashInitView: View {
                         let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
                         sharedDefaults?.set(data.encode(), forKey: "walletData")
                         
-                        let log = WalletDataLog(title: "リセット", type: "set", data: inputtingData)
+                        let log = WalletDataLog(title: "リセット", type: .reset, data: inputtingData)
                         modelContext.insert(log)
                         try? modelContext.save()
                         
@@ -170,7 +170,7 @@ private struct QuickNoteView: View {
                         let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
                         sharedDefaults?.set(data.encode(), forKey: "walletData")
                         
-                        let log = WalletDataLog(title: title, type: "quick", data: diff)
+                        let log = WalletDataLog(title: title, type: .quick, data: diff)
                         modelContext.insert(log)
                         try? modelContext.save()
                         
