@@ -56,7 +56,7 @@ struct CashView: View {
                     .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
                     .frame(height: baseSize * 4 + spaceSize * 7 + 32)
             case .widgetMedium, .widgetLarge:
-                Color.clear //dummy
+                EmptyView()
             }
             VStack {
                 HStack {
