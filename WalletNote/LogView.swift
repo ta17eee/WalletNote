@@ -186,7 +186,7 @@ private struct CalendarView: View {
                                         .stroke(Color.gray, lineWidth: 1)
                                     VStack {
                                         Text("\(day)")
-                                            .foregroundStyle(Color.black)
+                                            .foregroundStyle(getWeekdayColor(for: day, in: monthOffset))
                                         
                                         Spacer(minLength: 0)
                                     }
@@ -255,9 +255,118 @@ private struct CalendarView: View {
         
         return result
     }
+    
+    // 日付の曜日に応じた色を返すメソッド
+    private func getWeekdayColor(for day: Int, in monthOffset: Int) -> Color {
+        let now = Date()
+        let calendar = Calendar.current
+        
+        // 月の初日を取得
+        guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now),
+              let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: targetMonth)) else {
+            return .black // デフォルト色
+        }
+        
+        // 指定された日の日付を作成
+        guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else {
+            return .black
+        }
+        
+        // 祝日判定
+        if calendar.isJapaneseHoliday(date) {
+            return .red
+        }
+        
+        // 曜日を取得（1=日曜日, 7=土曜日）
+        let weekday = calendar.component(.weekday, from: date)
+        
+        switch weekday {
+        case 1: // 日曜日
+            return .red
+        case 7: // 土曜日
+            return .blue
+        default: // 平日
+            return .black
+        }
+    }
 }
 
 extension Calendar {
+    // 日本の祝日判定メソッド
+    func isJapaneseHoliday(_ date: Date) -> Bool {
+        let year = component(.year, from: date)
+        let month = component(.month, from: date)
+        let day = component(.day, from: date)
+        
+        // 固定祝日の判定
+        switch (month, day) {
+        case (1, 1): // 元日
+            return true
+        case (2, 11): // 建国記念の日
+            return true
+        case (2, 23): // 天皇誕生日
+            return year >= 2020
+        case (3, 21), (3, 20): // 春分の日（おおよその日付）
+            return true
+        case (4, 29): // 昭和の日
+            return true
+        case (5, 3): // 憲法記念日
+            return true
+        case (5, 4): // みどりの日
+            return true
+        case (5, 5): // こどもの日
+            return true
+        case (8, 11): // 山の日
+            return year >= 2016
+        case (9, 23), (9, 22): // 秋分の日（おおよその日付）
+            return true
+        case (11, 3): // 文化の日
+            return true
+        case (11, 23): // 勤労感謝の日
+            return true
+        default:
+            break
+        }
+        
+        // 可変祝日の判定
+        // 成人の日（1月の第2月曜日）
+        if month == 1 && isNthDayOfWeek(date, nth: 2, weekday: 2) {
+            return true
+        }
+        
+        // 海の日（7月の第3月曜日）
+        if month == 7 && isNthDayOfWeek(date, nth: 3, weekday: 2) {
+            return true
+        }
+        
+        // 敬老の日（9月の第3月曜日）
+        if month == 9 && isNthDayOfWeek(date, nth: 3, weekday: 2) {
+            return true
+        }
+        
+        // スポーツの日（10月の第2月曜日）
+        if month == 10 && isNthDayOfWeek(date, nth: 2, weekday: 2) {
+            return true
+        }
+        
+        // 振替休日（前日が日曜かつ祝日の場合）
+        let yesterday = date.addingTimeInterval(-86400) // 24時間前
+        if component(.weekday, from: yesterday) == 1 && isJapaneseHoliday(yesterday) {
+            return true
+        }
+        
+        return false
+    }
+    
+    // 第N X曜日判定ヘルパーメソッド
+    private func isNthDayOfWeek(_ date: Date, nth: Int, weekday: Int) -> Bool {
+        let day = component(.day, from: date)
+        let dateWeekday = component(.weekday, from: date)
+        
+        // dateWeekdayがweekdayと等しく、dayが(nth - 1) * 7 + 1から(nth * 7)の範囲内
+        return dateWeekday == weekday && ((nth - 1) * 7 + 1...nth * 7).contains(day)
+    }
+    
     func daysInMonth(for date:Date) -> Int {
         if let days = range(of: .day, in: .month, for: date)?.count {
             return days
