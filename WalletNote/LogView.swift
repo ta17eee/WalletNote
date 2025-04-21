@@ -331,6 +331,7 @@ private struct ListView: View {
     @State private var searchText = ""
     @State private var hasError = false
     @State private var errorMessage = ""
+    @State private var activeSheet: WalletDataLog?
     
     var body: some View {
         VStack {
@@ -366,7 +367,13 @@ private struct ListView: View {
                     Spacer()
                 }
             } else {
-                SafeLogsList(logs: filteredLogs)
+                HStack {
+                    Spacer()
+                        .frame(width: 8)
+                    SafeLogsList(logs: filteredLogs, activeSheet: $activeSheet)
+                    Spacer()
+                        .frame(width: 8)
+                }
             }
         }
         .background(Color(red: 1.0, green: 1.0, blue: 188/255))
@@ -378,6 +385,10 @@ private struct ListView: View {
                 errorMessage = error.localizedDescription
                 print("SwiftData Error: \(error)")
             }
+        }
+        .sheet(item: $activeSheet) { data in
+            LogDetailView(log: data)
+                .presentationDetents([.height(640)])
         }
     }
     
@@ -394,11 +405,12 @@ private struct ListView: View {
 
 private struct SafeLogsList: View {
     let logs: [WalletDataLog]
+    @Binding var activeSheet: WalletDataLog?
     
     var body: some View {
         List {
             ForEach(logs) { log in
-                LogRow(log: log)
+                LogRow(log: log, activeSheet: $activeSheet)
             }
         }
         .listStyle(PlainListStyle())
@@ -407,30 +419,35 @@ private struct SafeLogsList: View {
 
 private struct LogRow: View {
     let log: WalletDataLog
+    @Binding var activeSheet: WalletDataLog?
     
     var body: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Text(log.title)
-                    .font(.headline)
-                Spacer()
-                Text(formattedDate(log.timestamp))
-                    .font(.caption)
-                    .foregroundColor(.gray)
+        Button(action: {
+            activeSheet = log
+        }) {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text(log.title)
+                        .font(.headline)
+                    Spacer()
+                    Text(formattedDate(log.timestamp))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                
+                HStack {
+                    typeIcon(for: log.getDataType())
+                    Text(typeText(for: log.getDataType()))
+                        .font(.subheadline)
+                    Spacer()
+                    Text(formatAmount(log.totalValue))
+                        .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                        .font(.title3)
+                }
+                .padding(.top, 2)
             }
-            
-            HStack {
-                typeIcon(for: log.type)
-                Text(typeText(for: log.type))
-                    .font(.subheadline)
-                Spacer()
-                Text(formatAmount(log.totalValue))
-                    .foregroundColor(log.totalValue >= 0 ? .green : .red)
-                    .font(.title3)
-            }
-            .padding(.top, 2)
+            .padding(.vertical, 4)
         }
-        .padding(.vertical, 4)
     }
     
     private func formattedDate(_ date: Date) -> String {
@@ -509,6 +526,148 @@ private struct SearchBar: View {
         .padding(8)
         .background(Color(.systemBackground))
         .cornerRadius(10)
+    }
+}
+
+private struct LogDetailView: View {
+    let log: WalletDataLog
+    
+    var body: some View {
+        HStack {
+            Spacer()
+                .frame(width: 16)
+            VStack(alignment: .leading) {
+                Spacer()
+                    .frame(height: 16)
+                // タイトルと日時
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(log.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    HStack {
+                        typeIcon(for: log.getDataType())
+                        Text(typeText(for: log.getDataType()))
+                            .font(.subheadline)
+                        Spacer()
+                        Text(formattedDate(log.timestamp))
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                    }
+                }
+                Spacer()
+                    .frame(height: 16)
+                HStack {
+                    Text("合計金額:")
+                        .font(.headline)
+                    Spacer()
+                    Text(formatAmount(log.totalValue))
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                }
+                .padding(.vertical, 4)
+                Spacer()
+                    .frame(height: 16)
+                Divider()
+                Spacer()
+                    .frame(height: 16)
+                if log.getDataType() == .pay {
+                    let walletData = log.toWalletData()
+                    let (paymentData, changeData) = separatePaymentAndChange(walletData)
+                    
+                    CashView(data: .constant(paymentData), title: "支払い", type: .slim)
+                    Spacer()
+                        .frame(height: 16)
+                    CashView(data: .constant(changeData), title: "おつり", type: .slim)
+                } else {
+                    CashView(data: .constant(log.toWalletData()), title: typeText(for: log.getDataType()), type: .slim)
+                }
+                
+                Spacer()
+            }
+            Spacer()
+                .frame(width: 16)
+        }
+    }
+    
+    private func separatePaymentAndChange(_ data: WalletData) -> (WalletData, WalletData) {
+        // 支払いデータとおつりデータを分離
+        var paymentData = WalletData()
+        var changeData = WalletData()
+        
+        let cashData = data.getCashData()
+        
+        // 支払いは負の値、おつりは正の値として分離
+        for denom in cashData.getDenomination() {
+            let amount = data.getCashAmount(denom)
+            if amount < 0 {
+                // 負の値は支払い
+                let posAmount = -amount // 正の値に変換
+                for _ in 0..<posAmount {
+                    paymentData.addCash(denom)
+                }
+            } else if amount > 0 {
+                // 正の値はおつり
+                for _ in 0..<amount {
+                    changeData.addCash(denom)
+                }
+            }
+        }
+        
+        return (paymentData, changeData)
+    }
+    
+    private func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    
+    private func formatAmount(_ amount: Int) -> String {
+        return String.localizedStringWithFormat("%+d円", amount)
+    }
+    
+    private func typeIcon(for type: DataType) -> some View {
+        let systemName: String
+        let color: Color
+        
+        switch type {
+        case .plus:
+            systemName = "arrow.down.circle"
+            color = .green
+        case .pay:
+            systemName = "arrow.up.circle"
+            color = .red
+        case .reset:
+            systemName = "arrow.clockwise.circle"
+            color = .blue
+        case .quick:
+            systemName = "pencil.circle"
+            color = .orange
+        case .unknown:
+            systemName = "questionmark.circle"
+            color = .gray
+        }
+        
+        return Image(systemName: systemName)
+            .foregroundColor(color)
+    }
+    
+    private func typeText(for type: DataType) -> String {
+        switch type {
+        case .plus:
+            return "入金"
+        case .pay:
+            return "支払い"
+        case .reset:
+            return "残高設定"
+        case .quick:
+            return "クイックメモ"
+        case .unknown:
+            return "不明"
+        }
     }
 }
 
