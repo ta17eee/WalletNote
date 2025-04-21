@@ -20,7 +20,7 @@ struct WalletNoteApp: App {
             fatalError("Failed to initialize ModelContainer")
         }
         
-        if let data = UserDefaults.standard.data(forKey: "walletData") {
+        if let data = UserDefaults(suiteName: "group.ta17eee.WalletNote")?.data(forKey: "walletData") {
             walletData = data.decodeToWalletData()
         } else {
             walletData = .init()
