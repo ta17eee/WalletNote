@@ -82,6 +82,7 @@ struct LogView: View {
 private struct CalendarView: View {
     @State var monthOffset: Int = 0
     @State var isPickSheetPresented: Bool = false
+    @Query private var logs: [WalletDataLog]  // 全てのログを取得
     
     var body: some View {
         VStack {
@@ -184,12 +185,47 @@ private struct CalendarView: View {
                                     RoundedRectangle(cornerRadius: 4)
                                         .fill(Color.white)
                                         .stroke(Color.gray, lineWidth: 1)
-                                    VStack {
+                                    VStack(spacing: 2) {
                                         Text("\(day)")
                                             .foregroundStyle(getWeekdayColor(for: day, in: monthOffset))
-                                        
+                                        Spacer(minLength: 0)
+                                        // この日のログを取得して表示
+                                        let dayLogs = getLogsForDay(day, in: monthOffset)
+                                        if dayLogs.count > 0 {
+                                            if dayLogs.count <= 4 {
+                                                // 4件以下なら個別に表示
+                                                ForEach(dayLogs) { log in
+                                                    Text(formatAmount(log.totalValue))
+                                                        .font(.system(size: 8))
+                                                        .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                                                }
+                                            } else {
+                                                // 5件以上なら金額の絶対値が大きい2件と省略記号、合計を表示
+                                                let sortedLogs = dayLogs.sorted { abs($0.totalValue) > abs($1.totalValue) }
+                                                let topTwoLogs = Array(sortedLogs.prefix(2))
+                                                let total = dayLogs.reduce(0) { $0 + $1.totalValue }
+                                                
+                                                // 絶対値の大きい2件を表示
+                                                ForEach(topTwoLogs) { log in
+                                                    Text(formatAmount(log.totalValue))
+                                                        .font(.system(size: 8))
+                                                        .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                                                }
+                                                
+                                                // 省略記号を表示
+                                                Text("...")
+                                                    .font(.system(size: 8))
+                                                    .foregroundColor(.gray)
+                                                Divider()
+                                                // 合計を表示
+                                                Text("計 \(formatAmount(total))")
+                                                    .font(.system(size: 8))
+                                                    .foregroundColor(total >= 0 ? .green : .red)
+                                            }
+                                        }
                                         Spacer(minLength: 0)
                                     }
+                                    .padding(.top, 4)
                                 }
                             }
                         }
@@ -288,6 +324,33 @@ private struct CalendarView: View {
         default: // 平日
             return .black
         }
+    }
+    
+    // 特定の日のログを取得
+    private func getLogsForDay(_ day: Int, in monthOffset: Int) -> [WalletDataLog] {
+        let calendar = Calendar.current
+        let now = Date()
+        guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now) else {
+            return []
+        }
+        
+        // 対象日の開始と終了を計算
+        var components = calendar.dateComponents([.year, .month], from: targetMonth)
+        components.day = day
+        
+        guard let startDate = calendar.date(from: components),
+              let endDate = calendar.date(byAdding: .day, value: 1, to: startDate) else {
+            return []
+        }
+        
+        // その日のログをフィルタリング
+        return logs.filter { log in
+            log.timestamp >= startDate && log.timestamp < endDate
+        }
+    }
+    
+    private func formatAmount(_ amount: Int) -> String {
+        return String.localizedStringWithFormat("%+d", amount)
     }
 }
 
