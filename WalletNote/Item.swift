@@ -188,14 +188,11 @@ struct WalletData: Codable {
     }
     func minus(_ minus: WalletData) -> WalletData {
         var result: WalletData = self
-        if (result.payable(payment: minus)) {
-            for cash in cashData.getDenomination() {
-                _ = result.cashData.updateCash(cash, -minus.cashData.getCashAmount(cash))
-            }
-            result.calcValue()
-            return result
+        for cash in cashData.getDenomination() {
+            _ = result.cashData.updateCash(cash, -minus.cashData.getCashAmount(cash))
         }
-        return .init()
+        result.calcValue()
+        return result
     }
     func encode() -> Data {
         let encoder = JSONEncoder()
