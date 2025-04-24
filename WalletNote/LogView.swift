@@ -25,7 +25,6 @@ struct LogView: View {
                         ZStack {
                             Rectangle()
                                 .fill((selectedTab == 0) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
-//                                .stroke(Color.gray, lineWidth: 1)
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -40,7 +39,6 @@ struct LogView: View {
                         ZStack {
                             Rectangle()
                                 .fill((selectedTab == 1) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
-//                                .stroke(Color.gray, lineWidth: 1)
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -55,7 +53,6 @@ struct LogView: View {
                         ZStack {
                             Rectangle()
                                 .fill((selectedTab == 2) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
-//                                .stroke(Color.gray, lineWidth: 1)
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -80,9 +77,18 @@ struct LogView: View {
 }
 
 private struct CalendarView: View {
+    private enum ActiveSheet: Identifiable {
+        case pickMonth, showLog
+        
+        var id: Int {
+            hashValue
+        }
+    }
+    
     @State var monthOffset: Int = 0
-    @State var isPickSheetPresented: Bool = false
-    @Query private var logs: [WalletDataLog]  // 全てのログを取得
+    @State private var activeSheet: ActiveSheet?
+    @State private var sheetContent: [WalletDataLog] = []
+    @Query private var logs: [WalletDataLog]
     
     var body: some View {
         VStack {
@@ -91,7 +97,7 @@ private struct CalendarView: View {
                 Spacer()
                     .frame(width: 16)
                 Button(action: {
-                    isPickSheetPresented.toggle()
+                    activeSheet = .pickMonth
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
@@ -178,8 +184,10 @@ private struct CalendarView: View {
                         .frame(width: 8)
                     ForEach(week, id: \.self) { day in
                         if day != 0 {
+                            let dayLogs: [WalletDataLog] = getLogsForDay(day, in: monthOffset)
                             Button(action: {
-                                
+                                sheetContent = dayLogs
+                                activeSheet = .showLog
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 4)
@@ -189,35 +197,28 @@ private struct CalendarView: View {
                                         Text("\(day)")
                                             .foregroundStyle(getWeekdayColor(for: day, in: monthOffset))
                                         Spacer(minLength: 0)
-                                        // この日のログを取得して表示
-                                        let dayLogs = getLogsForDay(day, in: monthOffset)
                                         if dayLogs.count > 0 {
                                             if dayLogs.count <= 4 {
-                                                // 4件以下なら個別に表示
                                                 ForEach(dayLogs) { log in
-                                                    Text(formatAmount(log.totalValue))
+                                                    Text(formatAmount(log.totalValue) + "円")
                                                         .font(.system(size: 8))
                                                         .foregroundColor(log.totalValue >= 0 ? .green : .red)
                                                 }
                                             } else {
-                                                // 5件以上なら金額の絶対値が大きい2件と省略記号、合計を表示
                                                 let sortedLogs = dayLogs.sorted { abs($0.totalValue) > abs($1.totalValue) }
                                                 let topTwoLogs = Array(sortedLogs.prefix(2))
                                                 let total = dayLogs.reduce(0) { $0 + $1.totalValue }
                                                 
-                                                // 絶対値の大きい2件を表示
                                                 ForEach(topTwoLogs) { log in
-                                                    Text(formatAmount(log.totalValue))
+                                                    Text(formatAmount(log.totalValue) + "円")
                                                         .font(.system(size: 8))
                                                         .foregroundColor(log.totalValue >= 0 ? .green : .red)
                                                 }
                                                 
-                                                // 省略記号を表示
                                                 Text("...")
                                                     .font(.system(size: 8))
                                                     .foregroundColor(.gray)
                                                 Divider()
-                                                // 合計を表示
                                                 Text("計 \(formatAmount(total))")
                                                     .font(.system(size: 8))
                                                     .foregroundColor(total >= 0 ? .green : .red)
@@ -241,9 +242,15 @@ private struct CalendarView: View {
             }
             Spacer()
         }
-        .sheet(isPresented: $isPickSheetPresented) {
-            MonthPickView(monthOffset: $monthOffset)
-                .presentationDetents([.height(312)])
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .pickMonth:
+                MonthPickView(monthOffset: $monthOffset)
+                    .presentationDetents([.height(312)])
+            case .showLog:
+                ShowTodayLogView(logs: sheetContent)
+                    .presentationDetents([.height(640)])
+            }
         }
     }
     
@@ -264,13 +271,11 @@ private struct CalendarView: View {
         let now = Date()
         let target = calendar.date(byAdding: .month, value: offset, to: now)!
         
-        // 月の日数と最初の曜日を計算
-        let daysCount = calendar.daysInMonth(for: target)
+                let daysCount = calendar.daysInMonth(for: target)
         let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: target))!
         let firstDay = calendar.component(.weekday, from: firstDayOfMonth)
         
-        // 2次元配列構築
-        var result: [[Int]] = []
+                var result: [[Int]] = []
         var day = 1
         
         // 6週間分のカレンダーを生成
@@ -297,24 +302,20 @@ private struct CalendarView: View {
         let now = Date()
         let calendar = Calendar.current
         
-        // 月の初日を取得
-        guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now),
+                guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now),
               let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: targetMonth)) else {
-            return .black // デフォルト色
-        }
-        
-        // 指定された日の日付を作成
-        guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else {
             return .black
         }
         
-        // 祝日判定
-        if calendar.isJapaneseHoliday(date) {
+                guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else {
+            return .black
+        }
+        
+                if calendar.isJapaneseHoliday(date) {
             return .red
         }
         
-        // 曜日を取得（1=日曜日, 7=土曜日）
-        let weekday = calendar.component(.weekday, from: date)
+                let weekday = calendar.component(.weekday, from: date)
         
         switch weekday {
         case 1: // 日曜日
@@ -355,8 +356,7 @@ private struct CalendarView: View {
 }
 
 extension Calendar {
-    // 日本の祝日判定メソッド
-    func isJapaneseHoliday(_ date: Date) -> Bool {
+        func isJapaneseHoliday(_ date: Date) -> Bool {
         let year = component(.year, from: date)
         let month = component(.month, from: date)
         let day = component(.day, from: date)
@@ -421,16 +421,14 @@ extension Calendar {
         return false
     }
     
-    // 第N X曜日判定ヘルパーメソッド
-    private func isNthDayOfWeek(_ date: Date, nth: Int, weekday: Int) -> Bool {
+        private func isNthDayOfWeek(_ date: Date, nth: Int, weekday: Int) -> Bool {
         let day = component(.day, from: date)
         let dateWeekday = component(.weekday, from: date)
         
-        // dateWeekdayがweekdayと等しく、dayが(nth - 1) * 7 + 1から(nth * 7)の範囲内
-        return dateWeekday == weekday && ((nth - 1) * 7 + 1...nth * 7).contains(day)
+                return dateWeekday == weekday && ((nth - 1) * 7 + 1...nth * 7).contains(day)
     }
     
-    func daysInMonth(for date:Date) -> Int {
+    func daysInMonth(for date: Date) -> Int {
         if let days = range(of: .day, in: .month, for: date)?.count {
             return days
         }
@@ -447,7 +445,7 @@ extension Calendar {
             let isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
             return isLeapYear ? 29 : 28
         default:
-            return 30 // 不正な月の場合のフォールバック
+            return 30
         }
     }
 }
@@ -493,6 +491,23 @@ private struct MonthPickView: View {
                 .pickerStyle(.wheel)
             }
             Spacer()
+        }
+    }
+}
+
+private struct ShowTodayLogView: View {
+    let logs: [WalletDataLog]
+    
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach (logs, id: \.id) { log in
+                    NavigationLink(destination: LogDetailView(log: log)) {
+                        LogRow(log: log)
+                    }
+                }
+            }
+            .navigationTitle("取引履歴")
         }
     }
 }
@@ -582,7 +597,11 @@ private struct SafeLogsList: View {
     var body: some View {
         List {
             ForEach(logs) { log in
-                LogRow(log: log, activeSheet: $activeSheet)
+                Button(action: {
+                    activeSheet = log
+                }) {
+                    LogRow(log: log)
+                }
             }
         }
         .listStyle(PlainListStyle())
@@ -591,35 +610,30 @@ private struct SafeLogsList: View {
 
 private struct LogRow: View {
     let log: WalletDataLog
-    @Binding var activeSheet: WalletDataLog?
     
     var body: some View {
-        Button(action: {
-            activeSheet = log
-        }) {
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(log.title)
-                        .font(.headline)
-                    Spacer()
-                    Text(formattedDate(log.timestamp))
-                        .font(.caption)
-                        .foregroundColor(.gray)
-                }
-                
-                HStack {
-                    typeIcon(for: log.getDataType())
-                    Text(typeText(for: log.getDataType()))
-                        .font(.subheadline)
-                    Spacer()
-                    Text(formatAmount(log.totalValue))
-                        .foregroundColor(log.totalValue >= 0 ? .green : .red)
-                        .font(.title3)
-                }
-                .padding(.top, 2)
+        VStack(alignment: .leading) {
+            HStack {
+                Text(log.title)
+                    .font(.headline)
+                Spacer()
+                Text(formattedDate(log.timestamp))
+                    .font(.caption)
+                    .foregroundColor(.gray)
             }
-            .padding(.vertical, 4)
+            
+            HStack {
+                typeIcon(for: log.getDataType())
+                Text(typeText(for: log.getDataType()))
+                    .font(.subheadline)
+                Spacer()
+                Text(formatAmount(log.totalValue))
+                    .foregroundColor(log.totalValue >= 0 ? .green : .red)
+                    .font(.title3)
+            }
+            .padding(.top, 2)
         }
+        .padding(.vertical, 4)
     }
     
     private func formattedDate(_ date: Date) -> String {
@@ -711,8 +725,7 @@ private struct LogDetailView: View {
             VStack(alignment: .leading) {
                 Spacer()
                     .frame(height: 16)
-                // タイトルと日時
-                VStack(alignment: .leading, spacing: 8) {
+                                VStack(alignment: .leading, spacing: 8) {
                     Text(log.title)
                         .font(.title2)
                         .fontWeight(.bold)
@@ -764,24 +777,20 @@ private struct LogDetailView: View {
     }
     
     private func separatePaymentAndChange(_ data: WalletData) -> (WalletData, WalletData) {
-        // 支払いデータとおつりデータを分離
-        var paymentData = WalletData()
+                var paymentData = WalletData()
         var changeData = WalletData()
         
         let cashData = data.getCashData()
         
-        // 支払いは負の値、おつりは正の値として分離
-        for denom in cashData.getDenomination() {
+                for denom in cashData.getDenomination() {
             let amount = data.getCashAmount(denom)
             if amount < 0 {
-                // 負の値は支払い
-                let posAmount = -amount // 正の値に変換
+                                let posAmount = -amount
                 for _ in 0..<posAmount {
                     paymentData.addCash(denom)
                 }
             } else if amount > 0 {
-                // 正の値はおつり
-                for _ in 0..<amount {
+                                for _ in 0..<amount {
                     changeData.addCash(denom)
                 }
             }
