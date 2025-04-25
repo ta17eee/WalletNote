@@ -7,12 +7,25 @@
 		<key>WalletNote.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>1</integer>
 		</dict>
 		<key>WalletNoteWidgetExtension.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>6D5A405E2D51F1B60034EDC2</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>6DDC3C092DAD10B500545B4B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
