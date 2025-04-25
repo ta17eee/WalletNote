@@ -530,7 +530,10 @@ private struct ListView: View {
     
     var body: some View {
         VStack {
+            Spacer()
+                .frame(height: 2)
             SearchBar(text: $searchText)
+                .shadow(radius: 2)
                 .padding(.horizontal)
             
             if hasError {
@@ -562,13 +565,9 @@ private struct ListView: View {
                     Spacer()
                 }
             } else {
-                HStack {
-                    Spacer()
-                        .frame(width: 8)
-                    SafeLogsList(logs: filteredLogs, activeSheet: $activeSheet)
-                    Spacer()
-                        .frame(width: 8)
-                }
+                SafeLogsList(logs: filteredLogs, activeSheet: $activeSheet)
+                    .shadow(radius: 2)
+                    .padding(.horizontal)
             }
         }
         .background(Color(red: 1.0, green: 1.0, blue: 188/255))
@@ -719,7 +718,7 @@ private struct SearchBar: View {
         }
         .padding(8)
         .background(Color(.systemBackground))
-        .cornerRadius(10)
+        .cornerRadius(8)
     }
 }
 
@@ -984,7 +983,6 @@ private struct SummaryResultView: View {
                         }
                     }
                     .listStyle(PlainListStyle())
-                    .cornerRadius(8)
                     .shadow(radius: 2)
                     .padding(.horizontal)
                 }
