@@ -872,7 +872,22 @@ private struct SummaryView: View {
                 HStack {
                     Text("集計期間").font(.headline)
                     Spacer()
-                }
+                    HStack {
+                        Button(action: {
+                            setCurrentWeek()
+                        }) {
+                            Text("今週")
+                                .padding(.horizontal, 8)
+                        }
+                        
+                        Button(action: {
+                            setCurrentMonth()
+                        }) {
+                            Text("今月")
+                                .padding(.horizontal, 8)
+                        }
+                    }
+                 }
                 HStack {
                     Spacer()
                     VStack(alignment: .leading, spacing: 4) {
@@ -917,6 +932,41 @@ private struct SummaryView: View {
         return logs.filter { log in
             log.timestamp >= startOfDay && log.timestamp < endOfDay
         }.sorted { $0.timestamp > $1.timestamp }
+    }
+    
+    // 今日が含まれる週を設定する関数
+    private func setCurrentWeek() {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // 今日の週の開始日（日曜日）を取得
+        let weekdayComponents = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)
+        guard let startOfWeek = calendar.date(from: weekdayComponents) else { return }
+        
+        // 週の終了日（土曜日）を取得
+        guard let endOfWeek = calendar.date(byAdding: .day, value: 6, to: startOfWeek) else { return }
+        
+        startDate = startOfWeek
+        endDate = endOfWeek
+    }
+    
+    // 今月の期間を設定する関数
+    private func setCurrentMonth() {
+        let calendar = Calendar.current
+        let today = Date()
+        
+        // 今月の1日を取得
+        let components = calendar.dateComponents([.year, .month], from: today)
+        guard let startOfMonth = calendar.date(from: components) else { return }
+        
+        // 今月の最終日を取得
+        var nextMonthComponents = DateComponents()
+        nextMonthComponents.month = 1
+        nextMonthComponents.day = -1
+        guard let endOfMonth = calendar.date(byAdding: nextMonthComponents, to: startOfMonth) else { return }
+        
+        startDate = startOfMonth
+        endDate = endOfMonth
     }
 }
 
