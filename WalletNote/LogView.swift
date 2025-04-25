@@ -67,7 +67,7 @@ struct LogView: View {
                         .tag(0)
                     ListView()
                         .tag(1)
-                    Text("SumupView")
+                    SummaryView()
                         .tag(2)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -857,6 +857,143 @@ private struct LogDetailView: View {
         case .unknown:
             return "不明"
         }
+    }
+}
+
+private struct SummaryView: View {
+    @Query private var logs: [WalletDataLog]
+    @State private var startDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+    @State private var endDate: Date = Date()
+    
+    var body: some View {
+        VStack {
+            Spacer()
+                .frame(height: 2)
+            VStack(spacing: 16) {
+                HStack {
+                    Text("集計期間").font(.headline)
+                    Spacer()
+                }
+                HStack {
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("開始日")
+                            .font(.subheadline)
+                            .padding(.horizontal, 16)
+                        DatePicker("", selection: $startDate, displayedComponents: .date)
+                            .datePickerStyle(.compact)
+                            .environment(\.locale, Locale(identifier: "ja_JP"))
+                            .labelsHidden()
+                    }
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("終了日")
+                            .font(.subheadline)
+                            .padding(.horizontal, 16)
+                        DatePicker("", selection: $endDate, displayedComponents: .date)
+                            .datePickerStyle(.compact)
+                            .environment(\.locale, Locale(identifier: "ja_JP"))
+                            .labelsHidden()
+                    }
+                    Spacer()
+                }
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(8)
+            .shadow(radius: 2)
+            .padding(.horizontal)
+            
+            SummaryResultView(logs: filteredLogs)
+            
+            Spacer()
+        }
+        .background(Color(red: 1.0, green: 1.0, blue: 188/255))
+    }
+    
+    private var filteredLogs: [WalletDataLog] {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: startDate)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: endDate))!
+        
+        return logs.filter { log in
+            log.timestamp >= startOfDay && log.timestamp < endOfDay
+        }.sorted { $0.timestamp > $1.timestamp }
+    }
+}
+
+// 集計結果表示用のView
+private struct SummaryResultView: View {
+    let logs: [WalletDataLog]
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            VStack {
+                let totalAmount = logs.reduce(0) { $0 + $1.totalValue }
+                
+                HStack {
+                    Text("集計結果")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.bottom, 4)
+                
+                HStack {
+                    Text("合計金額:")
+                        .font(.subheadline)
+                    Spacer()
+                    Text(formatAmount(totalAmount))
+                        .font(.title3)
+                        .fontWeight(.bold)
+                        .foregroundColor(totalAmount >= 0 ? .green : .red)
+                }
+                
+                HStack {
+                    Text("該当件数:")
+                        .font(.subheadline)
+                    Spacer()
+                    Text("\(logs.count)件")
+                        .font(.subheadline)
+                }
+            }
+            .padding()
+            .background(Color.white)
+            .cornerRadius(8)
+            .shadow(radius: 2)
+            .padding(.horizontal)
+            
+            // 取引履歴リスト
+            if logs.isEmpty {
+                Text("該当する取引はありません")
+                    .foregroundColor(.gray)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .shadow(radius: 2)
+                    .padding(.horizontal)
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("取引履歴")
+                        .font(.headline)
+                        .padding(.horizontal, 32)
+                    
+                    List {
+                        ForEach(logs) { log in
+                            LogRow(log: log)
+                        }
+                    }
+                    .listStyle(PlainListStyle())
+                    .cornerRadius(8)
+                    .shadow(radius: 2)
+                    .padding(.horizontal)
+                }
+            }
+        }
+    }
+    
+    private func formatAmount(_ amount: Int) -> String {
+        return String.localizedStringWithFormat("%+d円", amount)
     }
 }
 
