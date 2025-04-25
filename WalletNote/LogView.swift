@@ -905,7 +905,6 @@ private struct SummaryView: View {
             
             SummaryResultView(logs: filteredLogs)
             
-            Spacer()
         }
         .background(Color(red: 1.0, green: 1.0, blue: 188/255))
     }
@@ -971,6 +970,7 @@ private struct SummaryResultView: View {
                     .cornerRadius(8)
                     .shadow(radius: 2)
                     .padding(.horizontal)
+                Spacer()
             } else {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("取引履歴")
