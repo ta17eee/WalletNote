@@ -497,6 +497,7 @@ private struct MonthPickView: View {
 
 private struct ShowTodayLogView: View {
     let logs: [WalletDataLog]
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationStack {
@@ -508,6 +509,13 @@ private struct ShowTodayLogView: View {
                 }
             }
             .navigationTitle("取引履歴")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("閉じる") {
+                        dismiss()
+                    }
+                }
+            }
         }
     }
 }
