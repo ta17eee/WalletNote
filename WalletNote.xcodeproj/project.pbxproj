@@ -71,6 +71,7 @@
 		6DDC3C252DAE01FA00545B4B /* Exceptions for "WalletNote" folder in "WalletNoteWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				CashView.swift,
 				Item.swift,
 			);

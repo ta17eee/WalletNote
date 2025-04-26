@@ -26,7 +26,7 @@ struct PaymentView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 1.0, green: 1.0, blue: 188/255)
+            Color.pastelYellow
                 .edgesIgnoringSafeArea(.top)
             VStack(spacing: 0) {
                 Spacer(minLength: 0)

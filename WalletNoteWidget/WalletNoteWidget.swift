@@ -58,7 +58,7 @@ struct WalletNoteWidget: Widget {
     var body: some WidgetConfiguration {
         AppIntentConfiguration(kind: kind, intent: ConfigurationAppIntent.self, provider: Provider()) { entry in
             WalletNoteWidgetEntryView(entry: entry)
-                .containerBackground(Color(red: 1.0, green: 206/255, blue: 158/255), for: .widget)
+                .containerBackground(Color.pastelOrenge, for: .widget)
         }
         .supportedFamilies([.systemMedium])
     }

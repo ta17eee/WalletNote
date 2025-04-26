@@ -53,7 +53,7 @@ struct CashView: View {
             switch type {
             case .nomal, .slim:
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(red: 1.0, green: 206/255, blue: 158/255))
+                    .fill(Color.pastelOrenge)
                     .frame(height: baseSize * 4 + spaceSize * 7 + 32)
             case .widgetMedium, .widgetLarge:
                 EmptyView()
@@ -556,7 +556,7 @@ private struct removeCashIcon: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color(red: 0.9, green: 0.9, blue: 0.9))
+                .fill(Color(.systemGray4))
                 .frame(width: 44, height: 44)
             Image(systemName: "minus")
         }

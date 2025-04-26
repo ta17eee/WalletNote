@@ -14,7 +14,7 @@ struct LogView: View {
     
     var body: some View {
         ZStack {
-            Color(red: 1.0, green: 1.0, blue: 188/255)
+            Color.pastelYellow
                 .edgesIgnoringSafeArea(.top)
             VStack {
                 HStack {
@@ -24,7 +24,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 0) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
+                                .fill((selectedTab == 0) ? Color.pastelYellow : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -38,7 +38,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 1) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
+                                .fill((selectedTab == 1) ? Color.pastelYellow : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -52,7 +52,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 2) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
+                                .fill((selectedTab == 2) ? Color.pastelYellow : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -570,7 +570,7 @@ private struct ListView: View {
                     .padding(.horizontal)
             }
         }
-        .background(Color(red: 1.0, green: 1.0, blue: 188/255))
+        .background(Color.pastelYellow)
         .onAppear {
             do {
                 try modelContext.save()
@@ -921,7 +921,7 @@ private struct SummaryView: View {
             SummaryResultView(logs: filteredLogs)
             
         }
-        .background(Color(red: 1.0, green: 1.0, blue: 188/255))
+        .background(Color.pastelYellow)
     }
     
     private var filteredLogs: [WalletDataLog] {
