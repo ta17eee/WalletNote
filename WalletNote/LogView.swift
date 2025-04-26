@@ -784,20 +784,20 @@ private struct LogDetailView: View {
     }
     
     private func separatePaymentAndChange(_ data: WalletData) -> (WalletData, WalletData) {
-                var paymentData = WalletData()
+        var paymentData = WalletData()
         var changeData = WalletData()
         
         let cashData = data.getCashData()
         
-                for denom in cashData.getDenomination() {
+        for denom in cashData.getDenomination() {
             let amount = data.getCashAmount(denom)
             if amount < 0 {
-                                let posAmount = -amount
+                let posAmount = -amount
                 for _ in 0..<posAmount {
                     paymentData.addCash(denom)
                 }
             } else if amount > 0 {
-                                for _ in 0..<amount {
+                for _ in 0..<amount {
                     changeData.addCash(denom)
                 }
             }
@@ -970,9 +970,9 @@ private struct SummaryView: View {
     }
 }
 
-// 集計結果表示用のView
 private struct SummaryResultView: View {
     let logs: [WalletDataLog]
+    @State private var activeSheet: WalletDataLog?
     
     var body: some View {
         VStack(spacing: 8) {
@@ -1010,7 +1010,6 @@ private struct SummaryResultView: View {
             .shadow(radius: 2)
             .padding(.horizontal)
             
-            // 取引履歴リスト
             if logs.isEmpty {
                 Text("該当する取引はありません")
                     .foregroundColor(.gray)
@@ -1027,16 +1026,15 @@ private struct SummaryResultView: View {
                         .font(.headline)
                         .padding(.horizontal, 32)
                     
-                    List {
-                        ForEach(logs) { log in
-                            LogRow(log: log)
-                        }
-                    }
-                    .listStyle(PlainListStyle())
+                    SafeLogsList(logs: logs, activeSheet: $activeSheet)
                     .shadow(radius: 2)
                     .padding(.horizontal)
                 }
             }
+        }
+        .sheet(item: $activeSheet) { data in
+            LogDetailView(log: data)
+                .presentationDetents([.height(640)])
         }
     }
     
