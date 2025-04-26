@@ -271,18 +271,17 @@ private struct CalendarView: View {
         let now = Date()
         let target = calendar.date(byAdding: .month, value: offset, to: now)!
         
-                let daysCount = calendar.daysInMonth(for: target)
+        let daysCount = calendar.daysInMonth(for: target)
         let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: target))!
         let firstDay = calendar.component(.weekday, from: firstDayOfMonth)
         
-                var result: [[Int]] = []
+        var result: [[Int]] = []
         var day = 1
         
         // 6週間分のカレンダーを生成
         for weekRow in 0..<6 {
             var week: [Int] = []
             
-            // 曜日ごとに日付または0を設定
             for weekdayColumn in 1...7 {
                 let isEmptyDay = (weekRow == 0 && weekdayColumn < firstDay) || day > daysCount
                 week.append(isEmptyDay ? 0 : day)
@@ -302,20 +301,20 @@ private struct CalendarView: View {
         let now = Date()
         let calendar = Calendar.current
         
-                guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now),
+        guard let targetMonth = calendar.date(byAdding: .month, value: monthOffset, to: now),
               let firstDayOfMonth = calendar.date(from: calendar.dateComponents([.year, .month], from: targetMonth)) else {
             return .black
         }
         
-                guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else {
+        guard let date = calendar.date(byAdding: .day, value: day - 1, to: firstDayOfMonth) else {
             return .black
         }
         
-                if calendar.isJapaneseHoliday(date) {
+        if calendar.isJapaneseHoliday(date) {
             return .red
         }
         
-                let weekday = calendar.component(.weekday, from: date)
+        let weekday = calendar.component(.weekday, from: date)
         
         switch weekday {
         case 1: // 日曜日
@@ -323,7 +322,7 @@ private struct CalendarView: View {
         case 7: // 土曜日
             return .blue
         default: // 平日
-            return .black
+            return .primary
         }
     }
     
