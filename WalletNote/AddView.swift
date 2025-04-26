@@ -91,8 +91,8 @@ struct AddView: View {
                 Spacer()
                     .frame(width: 16)
             }
+            .ignoresSafeArea(.keyboard)
         }
-        .ignoresSafeArea(.keyboard)
     }
     
     private func reset() {

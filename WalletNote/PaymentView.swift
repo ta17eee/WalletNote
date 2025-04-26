@@ -28,7 +28,7 @@ struct PaymentView: View {
         ZStack {
             Color(red: 1.0, green: 1.0, blue: 188/255)
                 .edgesIgnoringSafeArea(.top)
-            VStack {
+            VStack(spacing: 0) {
                 Spacer(minLength: 0)
                 HStack {
                     Spacer()
@@ -114,7 +114,6 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                 }
-                Spacer(minLength: 0)
                 TabView(selection: $selectedTab) {
                     HStack {
                         Spacer()
@@ -199,8 +198,8 @@ struct PaymentView: View {
                 Spacer(minLength: 8)
                     .frame(maxHeight: 16)
             }
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .ignoresSafeArea(.keyboard)
     }
     
     private func reset() {
