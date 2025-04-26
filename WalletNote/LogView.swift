@@ -24,7 +24,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 0) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
+                                .fill((selectedTab == 0) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -38,7 +38,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 1) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
+                                .fill((selectedTab == 1) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -52,7 +52,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 2) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color.white)
+                                .fill((selectedTab == 2) ? Color(red: 1.0, green: 1.0, blue: 188/255) : Color(.systemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -101,7 +101,7 @@ private struct CalendarView: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.white)
+                            .fill(Color(.systemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 44)
                         HStack {
@@ -117,7 +117,7 @@ private struct CalendarView: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color.white)
+                            .fill(Color(.systemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 44)
                         HStack {
@@ -191,7 +191,7 @@ private struct CalendarView: View {
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color.white)
+                                        .fill(Color(.systemBackground))
                                         .stroke(Color.gray, lineWidth: 1)
                                     VStack(spacing: 2) {
                                         Text("\(day)")
@@ -913,7 +913,7 @@ private struct SummaryView: View {
                 }
             }
             .padding()
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .cornerRadius(8)
             .shadow(radius: 2)
             .padding(.horizontal)
@@ -1005,7 +1005,7 @@ private struct SummaryResultView: View {
                 }
             }
             .padding()
-            .background(Color.white)
+            .background(Color(.systemBackground))
             .cornerRadius(8)
             .shadow(radius: 2)
             .padding(.horizontal)
@@ -1015,7 +1015,7 @@ private struct SummaryResultView: View {
                     .foregroundColor(.gray)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color.white)
+                    .background(Color(.systemBackground))
                     .cornerRadius(8)
                     .shadow(radius: 2)
                     .padding(.horizontal)
