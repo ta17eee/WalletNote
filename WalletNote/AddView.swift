@@ -25,7 +25,7 @@ struct AddView: View {
                     Spacer()
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
+                            .fill(Color(.tertiarySystemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         TextField("ここにタイトルを入れましょう", text: $title)
@@ -47,7 +47,7 @@ struct AddView: View {
                         }) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color(.systemBackground))
+                                    .fill(Color(.tertiarySystemBackground))
                                     .stroke(Color.gray, lineWidth: 2)
                                     .frame(height: 64)
                                 VStack {
@@ -74,7 +74,7 @@ struct AddView: View {
                         }) {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(Color(.systemBackground))
+                                    .fill(Color(.tertiarySystemBackground))
                                     .stroke(Color.gray, lineWidth: 2)
                                     .frame(height: 64)
                                 VStack {

@@ -24,7 +24,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 0) ? Color.pastelYellow : Color(.systemBackground))
+                                .fill((selectedTab == 0) ? Color.pastelYellow : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -38,7 +38,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 1) ? Color.pastelYellow : Color(.systemBackground))
+                                .fill((selectedTab == 1) ? Color.pastelYellow : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -52,7 +52,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 2) ? Color.pastelYellow : Color(.systemBackground))
+                                .fill((selectedTab == 2) ? Color.pastelYellow : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -101,7 +101,7 @@ private struct CalendarView: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
+                            .fill(Color(.tertiarySystemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 44)
                         HStack {
@@ -117,7 +117,7 @@ private struct CalendarView: View {
                 }) {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
+                            .fill(Color(.tertiarySystemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 44)
                         HStack {
@@ -191,7 +191,7 @@ private struct CalendarView: View {
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color(.systemBackground))
+                                        .fill(Color(.tertiarySystemBackground))
                                         .stroke(Color.gray, lineWidth: 1)
                                     VStack(spacing: 2) {
                                         Text("\(day)")
@@ -716,7 +716,7 @@ private struct SearchBar: View {
             }
         }
         .padding(8)
-        .background(Color(.systemBackground))
+        .background(Color(.tertiarySystemBackground))
         .cornerRadius(8)
     }
 }
@@ -912,7 +912,7 @@ private struct SummaryView: View {
                 }
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.tertiarySystemBackground))
             .cornerRadius(8)
             .shadow(radius: 2)
             .padding(.horizontal)
@@ -1004,7 +1004,7 @@ private struct SummaryResultView: View {
                 }
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color(.tertiarySystemBackground))
             .cornerRadius(8)
             .shadow(radius: 2)
             .padding(.horizontal)
@@ -1014,7 +1014,7 @@ private struct SummaryResultView: View {
                     .foregroundColor(.gray)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color(.systemBackground))
+                    .background(Color(.tertiarySystemBackground))
                     .cornerRadius(8)
                     .shadow(radius: 2)
                     .padding(.horizontal)

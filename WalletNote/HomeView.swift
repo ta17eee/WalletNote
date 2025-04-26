@@ -44,7 +44,7 @@ struct HomeView: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemBackground))
+                                .fill(Color(.tertiarySystemBackground))
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
@@ -62,7 +62,7 @@ struct HomeView: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemBackground))
+                                .fill(Color(.tertiarySystemBackground))
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {

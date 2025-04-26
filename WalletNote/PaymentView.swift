@@ -35,7 +35,7 @@ struct PaymentView: View {
                         .frame(width: 16)
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
+                            .fill(Color(.tertiarySystemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         TextField("ここにタイトルを入れましょう", text: $title)
@@ -53,7 +53,7 @@ struct PaymentView: View {
                         .frame(width: 16)
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
-                            .fill(Color(.systemBackground))
+                            .fill(Color(.tertiarySystemBackground))
                             .stroke(Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         HStack {
@@ -103,7 +103,7 @@ struct PaymentView: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemBackground))
+                                .fill(Color(.tertiarySystemBackground))
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(width: 64, height: 64)
                             Text("おつり\n自動")
@@ -149,7 +149,7 @@ struct PaymentView: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemBackground))
+                                .fill(Color(.tertiarySystemBackground))
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
@@ -181,7 +181,7 @@ struct PaymentView: View {
                     }) {
                         ZStack {
                             RoundedRectangle(cornerRadius: 8)
-                                .fill(Color(.systemBackground))
+                                .fill(Color(.tertiarySystemBackground))
                                 .stroke(Color.gray, lineWidth: 2)
                                 .frame(height: 64)
                             VStack {
