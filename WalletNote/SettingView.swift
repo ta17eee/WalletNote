@@ -59,6 +59,14 @@ struct SettingView: View {
                     }
                     .pickerStyle(.navigationLink)
                 }
+                Section(header: Text("情報")) {
+                    HStack {
+                        Text("バージョン")
+                        Spacer()
+                        Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "不明")
+                            .foregroundColor(.gray)
+                    }
+                }
             }
             .navigationTitle("設定")
         }
