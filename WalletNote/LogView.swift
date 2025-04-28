@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct LogView: View {
-    @State var selectedTab: Int = 0
+    @AppStorage("selectedLogTab") var selectedTab: Int = 0
     @Environment(\.modelContext) private var modelContext
     
     var body: some View {
