@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct PaymentView: View {
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     @Environment(\.modelContext) private var modelContext
     @Binding var walletData: WalletData
     @State var sum: String = ""
@@ -26,7 +27,7 @@ struct PaymentView: View {
     
     var body: some View {
         ZStack {
-            Color.pastelYellow
+            BackgroundColor.fromRawValue(backgroundColor).color
                 .edgesIgnoringSafeArea(.top)
             VStack(spacing: 0) {
                 Spacer(minLength: 0)

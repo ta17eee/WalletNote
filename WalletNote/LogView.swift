@@ -9,12 +9,14 @@ import SwiftUI
 import SwiftData
 
 struct LogView: View {
-    @AppStorage("selectedLogTab") var selectedTab: Int = 0
+    @AppStorage("selectedLogTab") private var selectedTab: Int = 0
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     @Environment(\.modelContext) private var modelContext
+    private var background: Color { BackgroundColor.fromRawValue(backgroundColor).color }
     
     var body: some View {
         ZStack {
-            Color.pastelYellow
+            BackgroundColor.fromRawValue(backgroundColor).color
                 .edgesIgnoringSafeArea(.top)
             VStack {
                 HStack {
@@ -24,7 +26,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 0) ? Color.pastelYellow : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 0) ? background : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -38,7 +40,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 1) ? Color.pastelYellow : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 1) ? background : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -52,7 +54,7 @@ struct LogView: View {
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 2) ? Color.pastelYellow : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 2) ? background : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -524,6 +526,7 @@ private struct ShowTodayLogView: View {
 private struct ListView: View {
     @Query(sort: \WalletDataLog.timestamp, order: .reverse, animation: .default) private var logs: [WalletDataLog]
     @Environment(\.modelContext) private var modelContext
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     @State private var searchText = ""
     @State private var hasError = false
     @State private var errorMessage = ""
@@ -571,7 +574,7 @@ private struct ListView: View {
                     .padding(.horizontal)
             }
         }
-        .background(Color.pastelYellow)
+        .background(BackgroundColor.fromRawValue(backgroundColor).color)
         .onAppear {
             do {
                 try modelContext.save()
@@ -864,6 +867,7 @@ private struct LogDetailView: View {
 
 private struct SummaryView: View {
     @Query private var logs: [WalletDataLog]
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     @State private var startDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     @State private var endDate: Date = Date()
     
@@ -924,7 +928,7 @@ private struct SummaryView: View {
             SummaryResultView(logs: filteredLogs)
             
         }
-        .background(Color.pastelYellow)
+        .background(BackgroundColor.fromRawValue(backgroundColor).color)
     }
     
     private var filteredLogs: [WalletDataLog] {

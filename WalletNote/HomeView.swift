@@ -19,10 +19,11 @@ struct HomeView: View {
     
     @Binding var walletData: WalletData
     @State private var activeSheet: ActiveSheet?
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     
     var body: some View {
         ZStack {
-            Color.pastelYellow
+            BackgroundColor.fromRawValue(backgroundColor).color
                 .edgesIgnoringSafeArea(.top)
             VStack {
                 Spacer()

@@ -13,10 +13,11 @@ struct AddView: View {
     @Binding var walletData: WalletData
     @State var title = ""
     @State var inputtingData: WalletData = .init()
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     
     var body: some View {
         ZStack {
-            Color.pastelYellow
+            BackgroundColor.fromRawValue(backgroundColor).color
                 .edgesIgnoringSafeArea(.top)
             HStack {
                 Spacer()

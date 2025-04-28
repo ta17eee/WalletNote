@@ -51,8 +51,24 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
         }
     }
     
-    // 文字列からAppearanceModeを取得するヘルパーメソッド
     static func fromRawValue(_ value: String) -> AppearanceMode {
         return AppearanceMode.allCases.first { $0.rawValue == value } ?? .system
+    }
+}
+
+enum BackgroundColor: String, CaseIterable, Identifiable {
+    case system = "システム"
+    case pastelYellow = "パステルイエロー"
+    
+    var id: String { self.rawValue }
+    var color: Color {
+        switch self {
+        case .system: return Color(.secondarySystemBackground)
+        case .pastelYellow: return Color.pastelYellow
+        }
+    }
+    
+    static func fromRawValue(_ value: String) -> BackgroundColor {
+        return BackgroundColor.allCases.first { $0.rawValue == value } ?? .system
     }
 }

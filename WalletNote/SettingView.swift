@@ -10,6 +10,7 @@ import SwiftUI
 struct SettingView: View {
     @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
     @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
+    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     
     var body: some View {
         NavigationStack {
@@ -28,6 +29,18 @@ struct SettingView: View {
                     Picker("テーマ", selection: $appearanceModeName) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.rawValue).tag(mode.rawValue)
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
+                    Picker("背景", selection: $backgroundColor) {
+                        ForEach(BackgroundColor.allCases) { mode in
+                            HStack {
+                                Text(mode.rawValue).tag(mode.rawValue)
+                                Circle()
+                                    .fill(Color(mode.color))
+                                    .stroke(Color.gray, lineWidth: 1)
+                                    .frame(width: 24, height: 24)
+                            }
                         }
                     }
                     .pickerStyle(.navigationLink)
