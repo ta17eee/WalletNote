@@ -9,10 +9,21 @@ import SwiftUI
 
 struct SettingView: View {
     @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
+    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
     
     var body: some View {
         NavigationStack {
             Form {
+                Section(header: Text("共通設定")) {
+                    HStack {
+                        Text("履歴が無題のとき")
+                            .fixedSize()
+                        TextField("", text: $emptyTitleText)
+                            .multilineTextAlignment(.trailing)
+                            .autocorrectionDisabled()
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                    }
+                }
                 Section(header: Text("アプリの外観")) {
                     Picker("テーマ", selection: $appearanceModeName) {
                         ForEach(AppearanceMode.allCases) { mode in
@@ -32,7 +43,6 @@ struct SettingView: View {
             }
             .navigationTitle("設定")
         }
-        .preferredColorScheme(AppearanceMode.fromRawValue(appearanceModeName).colorScheme)
     }
 }
 

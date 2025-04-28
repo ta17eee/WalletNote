@@ -618,11 +618,12 @@ private struct SafeLogsList: View {
 
 private struct LogRow: View {
     let log: WalletDataLog
+    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
-                Text(log.title)
+                Text(log.title.isEmpty ? emptyTitleText : log.title)
                     .font(.headline)
                 Spacer()
                 Text(formattedDate(log.timestamp))
@@ -725,6 +726,7 @@ private struct SearchBar: View {
 
 private struct LogDetailView: View {
     let log: WalletDataLog
+    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
     
     var body: some View {
         HStack {
@@ -734,7 +736,7 @@ private struct LogDetailView: View {
                 Spacer()
                     .frame(height: 16)
                                 VStack(alignment: .leading, spacing: 8) {
-                    Text(log.title)
+                    Text(log.title.isEmpty ? emptyTitleText : log.title)
                         .font(.title2)
                         .fontWeight(.bold)
                     
