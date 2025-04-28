@@ -193,7 +193,7 @@ private struct CalendarView: View {
                                     RoundedRectangle(cornerRadius: 4)
                                         .fill(Color(.tertiarySystemBackground))
                                         .stroke(Color.gray, lineWidth: 1)
-                                    VStack(spacing: 2) {
+                                    VStack(spacing: 0) {
                                         Text("\(day)")
                                             .foregroundStyle(getWeekdayColor(for: day, in: monthOffset))
                                         Spacer(minLength: 0)
@@ -218,6 +218,8 @@ private struct CalendarView: View {
                                                 Text("...")
                                                     .font(.system(size: 8))
                                                     .foregroundColor(.gray)
+                                                    .frame(height: 2)
+                                                    .padding(.bottom, 4)
                                                 Divider()
                                                 Text("計 \(formatAmount(total))")
                                                     .font(.system(size: 8))
