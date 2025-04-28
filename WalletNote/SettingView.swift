@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct SettingView: View {
-    @EnvironmentObject private var settings: AppSettings
+    @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
     
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("アプリの外観")) {
-                    Picker("テーマ", selection: $settings.appearanceMode) {
+                    Picker("テーマ", selection: $appearanceModeName) {
                         ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(mode.rawValue).tag(mode.rawValue)
                         }
                     }
                     .pickerStyle(.navigationLink)
@@ -32,7 +32,7 @@ struct SettingView: View {
             }
             .navigationTitle("設定")
         }
-        .preferredColorScheme(settings.appearanceMode.colorScheme)
+        .preferredColorScheme(AppearanceMode.fromRawValue(appearanceModeName).colorScheme)
     }
 }
 

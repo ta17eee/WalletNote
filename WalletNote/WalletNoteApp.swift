@@ -12,7 +12,7 @@ import SwiftData
 struct WalletNoteApp: App {
     let container: ModelContainer
     let walletData: WalletData
-    @StateObject private var appSettings = AppSettings()
+    @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
     
     init() {
         do {
@@ -31,28 +31,9 @@ struct WalletNoteApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(walletData: walletData)
-                .environmentObject(appSettings)
-                .preferredColorScheme(appSettings.appearanceMode.colorScheme)
+                .preferredColorScheme(AppearanceMode.fromRawValue(appearanceModeName).colorScheme)
         }
         .modelContainer(container)
-    }
-}
-
-class AppSettings: ObservableObject {
-    @Published var appearanceMode: AppearanceMode {
-        didSet {
-            UserDefaults.standard.set(appearanceMode.rawValue, forKey: "appearanceMode")
-        }
-    }
-    
-    init() {
-        let savedMode = UserDefaults.standard.string(forKey: "appearanceMode") ?? AppearanceMode.system.rawValue
-        
-        if let mode = AppearanceMode.allCases.first(where: { $0.rawValue == savedMode }) {
-            self.appearanceMode = mode
-        } else {
-            self.appearanceMode = .system
-        }
     }
 }
 
@@ -64,12 +45,14 @@ enum AppearanceMode: String, CaseIterable, Identifiable {
     var id: String { self.rawValue }
     var colorScheme: ColorScheme? {
         switch self {
-        case .system:
-            return nil
-        case .light:
-            return .light
-        case .dark:
-            return .dark
+        case .system: return nil
+        case .light: return .light
+        case .dark: return .dark
         }
+    }
+    
+    // 文字列からAppearanceModeを取得するヘルパーメソッド
+    static func fromRawValue(_ value: String) -> AppearanceMode {
+        return AppearanceMode.allCases.first { $0.rawValue == value } ?? .system
     }
 }
