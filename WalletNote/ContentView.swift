@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @AppStorage("accentColor") private var accentColor: String = AccentColor.system.rawValue
     @Environment(\.modelContext) private var modelContext
     @State var selectedTab: Int = 2
     @State var walletData: WalletData
@@ -51,8 +52,7 @@ struct ContentView: View {
                 }
             }.tag(4)
         }
-        .accentColor(.green)
-//        .tabViewStyle(PageTabViewStyle())
+        .accentColor(AccentColor.fromRawValue(accentColor).color)
     }
 }
 

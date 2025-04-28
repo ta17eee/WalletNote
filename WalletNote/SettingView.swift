@@ -11,6 +11,7 @@ struct SettingView: View {
     @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
     @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
     @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @AppStorage("accentColor") private var accentColor: String = AccentColor.system.rawValue
     
     var body: some View {
         NavigationStack {
@@ -35,11 +36,23 @@ struct SettingView: View {
                     Picker("背景", selection: $backgroundColor) {
                         ForEach(BackgroundColor.allCases) { mode in
                             HStack {
-                                Text(mode.rawValue).tag(mode.rawValue)
                                 Circle()
                                     .fill(Color(mode.color))
                                     .stroke(Color.gray, lineWidth: 1)
                                     .frame(width: 24, height: 24)
+                                Text(mode.rawValue).tag(mode.rawValue)
+                            }
+                        }
+                    }
+                    .pickerStyle(.navigationLink)
+                    Picker("アクセントカラー", selection: $accentColor) {
+                        ForEach(AccentColor.allCases) { mode in
+                            HStack {
+                                Circle()
+                                    .fill(Color(mode.color))
+                                    .stroke(Color.gray, lineWidth: 1)
+                                    .frame(width: 24, height: 24)
+                                Text(mode.rawValue).tag(mode.rawValue)
                             }
                         }
                     }
