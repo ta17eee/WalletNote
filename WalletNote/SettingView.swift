@@ -47,13 +47,8 @@ struct SettingView: View {
                     .pickerStyle(.navigationLink)
                     Picker("アクセントカラー", selection: $accentColor) {
                         ForEach(AccentColor.allCases) { mode in
-                            HStack {
-                                Circle()
-                                    .fill(Color(mode.color))
-                                    .stroke(Color.gray, lineWidth: 1)
-                                    .frame(width: 24, height: 24)
-                                Text(mode.rawValue).tag(mode.rawValue)
-                            }
+                            Text(mode.rawValue).tag(mode.rawValue)
+                                .foregroundStyle(Color(mode.color))
                         }
                     }
                     .pickerStyle(.navigationLink)
