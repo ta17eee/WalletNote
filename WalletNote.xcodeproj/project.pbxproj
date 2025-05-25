@@ -72,8 +72,11 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Assets.xcassets,
-				CashView.swift,
-				Item.swift,
+				"Models/Extensions/Data+WalletData.swift",
+				Models/WalletData.swift,
+				Views/Components/CashDisplayView.swift,
+				Views/Components/CoinBillViews.swift,
+				Views/Components/DisplayType.swift,
 			);
 			target = 6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */;
 		};
