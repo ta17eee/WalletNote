@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "wallet_note.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
