@@ -115,22 +115,39 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                 }
+                Spacer()
+                    .frame(minHeight: 8, maxHeight: 16)
+                HStack {
+                    Spacer()
+                        .frame(width: 64)
+                    Picker("", selection: $selectedTab) {
+                        Text("支払い").tag(0)
+                        Text("お釣り").tag(1)
+                    }
+                    Spacer()
+                        .frame(width: 64)
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                Spacer()
+                    .frame(minHeight: 4, maxHeight: 8)
                 TabView(selection: $selectedTab) {
                     HStack {
                         Spacer()
                             .frame(width: 16)
-                        CashView(data: $pay, title: "支払い")
+                        CashView(data: $pay, title: "支払い", type: .slim)
                         Spacer()
                             .frame(width: 16)
                     }.tag(0)
                     HStack {
                         Spacer().frame(width: 16)
-                        CashView(data: autoChange ? .constant(pay.calcChange(sum)) : $change, title: "お釣り")
+                        CashView(data: autoChange ? .constant(pay.calcChange(sum)) : $change, title: "お釣り", type: .slim)
                         Spacer().frame(width: 16)
                     }.tag(1)
                 }
-                .tabViewStyle(PageTabViewStyle())
-                .frame(height: 306)
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: 216)
+                Spacer()
+                    .frame(maxHeight: 16)
                 HStack {
                     Spacer()
                         .frame(width: 16)
