@@ -17,13 +17,12 @@ struct HomeView: View {
         }
     }
     
-    @Binding var walletData: WalletData
     @State private var activeSheet: ActiveSheet?
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @EnvironmentObject private var dataContext: CentralDataContext
     
     var body: some View {
         ZStack {
-            BackgroundColor.fromRawValue(backgroundColor).color
+            dataContext.backgroundColor.color
                 .edgesIgnoringSafeArea(.top)
             VStack {
                 Spacer()
@@ -31,7 +30,7 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                         .frame(width: 16)
-                    CashView(data: $walletData, title: "残高")
+                    CashView(data: .constant(dataContext.walletData), title: "残高")
                     Spacer()
                         .frame(width: 16)
                 }
@@ -83,10 +82,10 @@ struct HomeView: View {
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {
                 case .initView:
-                    CashInitView(data: $walletData)
+                    CashInitView()
                         .presentationDetents([.height(560)])
                 case .quickView:
-                    QuickNoteView(walletData: $walletData)
+                    QuickNoteView()
                         .presentationDetents([.height(640)])
                 }
             }
@@ -96,7 +95,8 @@ struct HomeView: View {
 
 #Preview {
     TabView {
-        HomeView(walletData: .constant(WalletData()))
+        HomeView()
             .modelContainer(for: WalletDataLog.self, inMemory: true)
+            .environmentObject(CentralDataContext(forTesting: true))
     }
 }

@@ -10,7 +10,7 @@ import SwiftData
 
 struct SummaryView: View {
     @Query private var logs: [WalletDataLog]
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @EnvironmentObject private var dataContext: CentralDataContext
     @State private var startDate: Date = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     @State private var endDate: Date = Date()
     
@@ -71,7 +71,7 @@ struct SummaryView: View {
             SummaryResultView(logs: filteredLogs)
             
         }
-        .background(BackgroundColor.fromRawValue(backgroundColor).color)
+        .background(dataContext.backgroundColor.color)
     }
     
     private var filteredLogs: [WalletDataLog] {
@@ -118,4 +118,10 @@ struct SummaryView: View {
         startDate = startOfMonth
         endDate = endOfMonth
     }
+}
+
+#Preview {
+    SummaryView()
+        .modelContainer(for: WalletDataLog.self, inMemory: true)
+        .environmentObject(CentralDataContext(forTesting: true))
 }

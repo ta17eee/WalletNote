@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-enum AppearanceMode: String, CaseIterable, Identifiable {
+enum AppearanceMode: String, CaseIterable, Identifiable, Codable {
     case system = "システム設定に従う"
     case light = "ライトモード"
     case dark = "ダークモード"

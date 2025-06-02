@@ -9,24 +9,24 @@ import SwiftUI
 import SwiftData
 
 struct LogView: View {
-    @AppStorage("selectedLogTab") private var selectedTab: Int = 0
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @EnvironmentObject private var dataContext: CentralDataContext
+    @State private var selectedTab: Int = 0
     @Environment(\.modelContext) private var modelContext
-    private var background: Color { BackgroundColor.fromRawValue(backgroundColor).color }
     
     var body: some View {
         ZStack {
-            BackgroundColor.fromRawValue(backgroundColor).color
+            dataContext.backgroundColor.color
                 .edgesIgnoringSafeArea(.top)
             VStack {
                 HStack {
                     Spacer(minLength: 4)
                     Button(action: {
                         selectedTab = 0
+                        dataContext.saveSelectedLogTab(selectedTab)
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 0) ? background : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 0) ? dataContext.backgroundColor.color : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "calendar")
@@ -37,10 +37,11 @@ struct LogView: View {
                     Spacer(minLength: 4)
                     Button(action: {
                         selectedTab = 1
+                        dataContext.saveSelectedLogTab(selectedTab)
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 1) ? background : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 1) ? dataContext.backgroundColor.color : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "list.bullet")
@@ -51,10 +52,11 @@ struct LogView: View {
                     Spacer(minLength: 4)
                     Button(action: {
                         selectedTab = 2
+                        dataContext.saveSelectedLogTab(selectedTab)
                     }) {
                         ZStack {
                             Rectangle()
-                                .fill((selectedTab == 2) ? background : Color(.tertiarySystemBackground))
+                                .fill((selectedTab == 2) ? dataContext.backgroundColor.color : Color(.tertiarySystemBackground))
                                 .frame(height: 64)
                             HStack {
                                 Image(systemName: "magnifyingglass")
@@ -75,6 +77,10 @@ struct LogView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             }
         }
+        .onAppear {
+            // DataContextから設定を読み込み
+            selectedTab = dataContext.loadSelectedLogTab()
+        }
     }
 }
 
@@ -82,5 +88,6 @@ struct LogView: View {
     TabView {
         LogView()
             .modelContainer(for: WalletDataLog.self, inMemory: true)
+            .environmentObject(CentralDataContext(forTesting: true))
     }
 }

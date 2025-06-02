@@ -11,7 +11,7 @@ import SwiftData
 struct ListView: View {
     @Query(sort: \WalletDataLog.timestamp, order: .reverse, animation: .default) private var logs: [WalletDataLog]
     @Environment(\.modelContext) private var modelContext
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @EnvironmentObject private var dataContext: CentralDataContext
     @State private var searchText = ""
     @State private var hasError = false
     @State private var errorMessage = ""
@@ -59,7 +59,11 @@ struct ListView: View {
                     .padding(.horizontal)
             }
         }
-        .background(BackgroundColor.fromRawValue(backgroundColor).color)
+        .background(dataContext.backgroundColor.color)
+        .sheet(item: $activeSheet) { log in
+            LogDetailView(log: log)
+                .presentationDetents([.height(640)])
+        }
         .onAppear {
             do {
                 try modelContext.save()
@@ -68,10 +72,6 @@ struct ListView: View {
                 errorMessage = error.localizedDescription
                 print("SwiftData Error: \(error)")
             }
-        }
-        .sheet(item: $activeSheet) { data in
-            LogDetailView(log: data)
-                .presentationDetents([.height(640)])
         }
     }
     
@@ -84,4 +84,10 @@ struct ListView: View {
             }
         }
     }
+}
+
+#Preview {
+    ListView()
+        .modelContainer(for: WalletDataLog.self, inMemory: true)
+        .environmentObject(CentralDataContext(forTesting: true))
 }

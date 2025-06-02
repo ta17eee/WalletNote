@@ -8,10 +8,7 @@
 import SwiftUI
 
 struct SettingView: View {
-    @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
-    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
-    @AppStorage("accentColor") private var accentColor: String = AccentColor.system.rawValue
+    @EnvironmentObject private var serviceManager: CentralDataContext
     
     var body: some View {
         NavigationStack {
@@ -20,38 +17,52 @@ struct SettingView: View {
                     HStack {
                         Text("履歴が無題のとき")
                             .fixedSize()
-                        TextField("", text: $emptyTitleText)
+                        TextField("", text: $serviceManager.emptyTitleText)
                             .multilineTextAlignment(.trailing)
                             .autocorrectionDisabled()
                             .frame(maxWidth: .infinity, alignment: .trailing)
+                            .onChange(of: serviceManager.emptyTitleText) {
+                                serviceManager.saveEmptyTitleText(serviceManager.emptyTitleText)
+                            }
                     }
                 }
                 Section(header: Text("アプリの外観")) {
-                    Picker("テーマ", selection: $appearanceModeName) {
+                    Picker("テーマ", selection: $serviceManager.appearanceMode) {
                         ForEach(AppearanceMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode.rawValue)
+                            Text(mode.rawValue).tag(mode)
                         }
                     }
                     .pickerStyle(.navigationLink)
-                    Picker("背景", selection: $backgroundColor) {
+                    .onChange(of: serviceManager.appearanceMode) {
+                        serviceManager.saveAppearanceMode(serviceManager.appearanceMode)
+                    }
+                    
+                    Picker("背景", selection: $serviceManager.backgroundColor) {
                         ForEach(BackgroundColor.allCases) { mode in
                             HStack {
                                 Circle()
                                     .fill(Color(mode.color))
                                     .stroke(Color.gray, lineWidth: 1)
                                     .frame(width: 24, height: 24)
-                                Text(mode.rawValue).tag(mode.rawValue)
-                            }
+                                Text(mode.rawValue)
+                            }.tag(mode)
                         }
                     }
                     .pickerStyle(.navigationLink)
-                    Picker("アクセントカラー", selection: $accentColor) {
+                    .onChange(of: serviceManager.backgroundColor) {
+                        serviceManager.saveBackgroundColor(serviceManager.backgroundColor)
+                    }
+                    
+                    Picker("アクセントカラー", selection: $serviceManager.accentColor) {
                         ForEach(AccentColor.allCases) { mode in
-                            Text(mode.rawValue).tag(mode.rawValue)
+                            Text(mode.rawValue).tag(mode)
                                 .foregroundStyle(Color(mode.color))
                         }
                     }
                     .pickerStyle(.navigationLink)
+                    .onChange(of: serviceManager.accentColor) {
+                        serviceManager.saveAccentColor(serviceManager.accentColor)
+                    }
                 }
                 Section(header: Text("情報")) {
                     HStack {
@@ -70,5 +81,6 @@ struct SettingView: View {
 #Preview {
     TabView {
         SettingView()
+            .environmentObject(CentralDataContext(forTesting: true))
     }
 }

@@ -9,25 +9,22 @@ import SwiftUI
 import SwiftData
 
 struct PaymentView: View {
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
+    @EnvironmentObject private var serviceManager: CentralDataContext
     @Environment(\.modelContext) private var modelContext
-    @Binding var walletData: WalletData
     @State var sum: String = ""
-    @State var pay: WalletData
+    @State var pay: WalletData = .init()
     @State var change: WalletData = .init()
     @State var title: String = ""
     @State var selectedTab: Int = 0
     @State var autoChange: Bool = true
     @FocusState var isTextFieldFocused: Bool
     
-    init(walletData: Binding<WalletData>) {
-        _walletData = walletData
-        pay = .init(max: walletData.wrappedValue.getCashData())
+    init() {
     }
     
     var body: some View {
         ZStack {
-            BackgroundColor.fromRawValue(backgroundColor).color
+            serviceManager.backgroundColor.color
                 .edgesIgnoringSafeArea(.top)
             VStack(spacing: 0) {
                 Spacer(minLength: 0)
@@ -184,16 +181,17 @@ struct PaymentView: View {
                         if (autoChange) {
                             change = pay.calcChange(sum)
                         }
-                        walletData = walletData.minus(pay)
-                        walletData = walletData.plus(change)
-                        // App Groupに保存するように変更
-                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
-                        sharedDefaults?.set(walletData.encode(), forKey: "walletData")
+                        var updatedWalletData = serviceManager.walletData.minus(pay)
+                        updatedWalletData = updatedWalletData.plus(change)
+                        serviceManager.saveWalletData(updatedWalletData)
                         
                         let paymentData = change.minus(pay)
                         let log = WalletDataLog(title: title, type: .pay, data: paymentData)
-                        modelContext.insert(log)
-                        try? modelContext.save()
+                        do {
+                            try serviceManager.saveLog(log)
+                        } catch {
+                            print("Failed to save log: \(error)")
+                        }
                         
                         reset()
                     }) {
@@ -218,6 +216,10 @@ struct PaymentView: View {
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
+        .onAppear {
+            // ServiceManagerからwalletDataの現在の金額を取得してpayを初期化
+            pay = .init(max: serviceManager.walletData.getCashData())
+        }
     }
     
     private func reset() {
@@ -230,7 +232,8 @@ struct PaymentView: View {
 
 #Preview {
     TabView {
-        PaymentView(walletData: .constant(WalletData()))
+        PaymentView()
             .modelContainer(for: WalletDataLog.self, inMemory: true)
+            .environmentObject(CentralDataContext(forTesting: true))
     }
 }

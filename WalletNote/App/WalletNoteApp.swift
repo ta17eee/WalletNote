@@ -11,8 +11,7 @@ import SwiftData
 @main
 struct WalletNoteApp: App {
     let container: ModelContainer
-    let walletData: WalletData
-    @AppStorage("appearanceMode") private var appearanceModeName: String = AppearanceMode.system.rawValue
+    @StateObject private var dataContext = CentralDataContext()
     
     init() {
         do {
@@ -20,18 +19,18 @@ struct WalletNoteApp: App {
         } catch {
             fatalError("Failed to initialize ModelContainer")
         }
-        
-        if let data = UserDefaults(suiteName: "group.ta17eee.WalletNote")?.data(forKey: "walletData") {
-            walletData = data.decodeToWalletData()
-        } else {
-            walletData = .init()
-        }
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView(walletData: walletData)
-                .preferredColorScheme(AppearanceMode.fromRawValue(appearanceModeName).colorScheme)
+            ContentView()
+                .preferredColorScheme(dataContext.appearanceMode.colorScheme)
+                .environmentObject(dataContext)
+                .onAppear {
+                    // ServiceManagerにModelContextを設定
+                    let modelContext = container.mainContext as ModelContext
+                    dataContext.configure(with: modelContext)
+                }
         }
         .modelContainer(container)
     }

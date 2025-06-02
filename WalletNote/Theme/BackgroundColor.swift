@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-enum BackgroundColor: String, CaseIterable, Identifiable {
+enum BackgroundColor: String, CaseIterable, Identifiable, Codable {
     case system = "システム"
     case pastelYellow = "パステルイエロー"
     

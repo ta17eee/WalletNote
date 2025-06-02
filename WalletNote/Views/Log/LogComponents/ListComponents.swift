@@ -30,7 +30,8 @@ struct SafeLogsList: View {
 
 struct LogRow: View {
     let log: WalletDataLog
-    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
+    @EnvironmentObject private var serviceManager: CentralDataContext
+    @State private var emptyTitleText: String = "タイトルなし"
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -54,7 +55,12 @@ struct LogRow: View {
             }
             .padding(.top, 2)
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 16)
+        .onAppear {
+            // ServiceManagerから空のタイトルテキストを読み込み
+            emptyTitleText = serviceManager.loadEmptyTitleText()
+        }
     }
     
     private func formattedDate(_ date: Date) -> String {

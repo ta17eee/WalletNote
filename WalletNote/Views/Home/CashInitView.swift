@@ -10,8 +10,8 @@ import SwiftData
 
 struct CashInitView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var serviceManager: CentralDataContext
     @Environment(\.dismiss) var dismiss
-    @Binding var data: WalletData
     @State var inputtingData: WalletData = .init()
     
     var body: some View {
@@ -27,14 +27,14 @@ struct CashInitView: View {
                     .frame(height: 44)
                     Spacer()
                     Button("確定") {
-                        data = inputtingData
-                        // App Groupに保存するように変更
-                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
-                        sharedDefaults?.set(data.encode(), forKey: "walletData")
+                        serviceManager.saveWalletData(inputtingData)
                         
                         let log = WalletDataLog(title: "リセット", type: .reset, data: inputtingData)
-                        modelContext.insert(log)
-                        try? modelContext.save()
+                        do {
+                            try serviceManager.saveLog(log)
+                        } catch {
+                            print("Failed to save log: \(error)")
+                        }
                         
                         dismiss()
                     }

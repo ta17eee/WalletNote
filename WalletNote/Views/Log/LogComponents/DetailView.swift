@@ -12,7 +12,8 @@ import SwiftData
 
 struct LogDetailView: View {
     let log: WalletDataLog
-    @AppStorage("emptyTitleText") private var emptyTitleText: String = "タイトルなし"
+    @EnvironmentObject private var serviceManager: CentralDataContext
+    @State private var emptyTitleText: String = "タイトルなし"
     
     var body: some View {
         HStack {
@@ -69,6 +70,10 @@ struct LogDetailView: View {
             }
             Spacer()
                 .frame(width: 16)
+        }
+        .onAppear {
+            // ServiceManagerから空のタイトルテキストを読み込み
+            emptyTitleText = serviceManager.loadEmptyTitleText()
         }
     }
     

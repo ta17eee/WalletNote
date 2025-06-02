@@ -9,28 +9,26 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-    @AppStorage("accentColor") private var accentColor: String = AccentColor.system.rawValue
-    @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var serviceManager: CentralDataContext
     @State var selectedTab: Int = 2
-    @State var walletData: WalletData
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            AddView(walletData: $walletData)
+            AddView()
             .tabItem {
                 VStack {
                     Image(systemName: "tray.and.arrow.down.fill")
                     Text("追加")
                 }
             }.tag(0)
-            PaymentView(walletData: $walletData)
+            PaymentView()
             .tabItem {
                 VStack {
                     Image(systemName: "tray.and.arrow.up.fill")
                     Text("支払い")
                 }
             }.tag(1)
-            HomeView(walletData: $walletData)
+            HomeView()
             .tabItem {
                 VStack {
                     Image(systemName: "house")
@@ -52,11 +50,12 @@ struct ContentView: View {
                 }
             }.tag(4)
         }
-        .accentColor(AccentColor.fromRawValue(accentColor).color)
+        .accentColor(serviceManager.accentColor.color)
     }
 }
 
 #Preview {
-    ContentView(walletData: .init())
+    ContentView()
         .modelContainer(for: WalletDataLog.self, inMemory: true)
+        .environmentObject(CentralDataContext(forTesting: true))
 }

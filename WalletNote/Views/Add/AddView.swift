@@ -10,14 +10,13 @@ import SwiftData
 
 struct AddView: View {
     @Environment(\.modelContext) private var modelContext
-    @Binding var walletData: WalletData
+    @EnvironmentObject private var serviceManager: CentralDataContext
     @State var title = ""
     @State var inputtingData: WalletData = .init()
-    @AppStorage("backgroundColor") private var backgroundColor: String = BackgroundColor.system.rawValue
     
     var body: some View {
         ZStack {
-            BackgroundColor.fromRawValue(backgroundColor).color
+            serviceManager.backgroundColor.color
                 .edgesIgnoringSafeArea(.top)
             HStack {
                 Spacer()
@@ -62,14 +61,17 @@ struct AddView: View {
                         Spacer()
                             .frame(width: 16)
                         Button(action: {
-                            walletData = walletData.plus(inputtingData)
-                            // App Groupに保存するように変更
-                            let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
-                            sharedDefaults?.set(walletData.encode(), forKey: "walletData")
+                            // ServiceManagerのwalletDataを更新
+                            let updatedWalletData = serviceManager.walletData.plus(inputtingData)
+                            serviceManager.saveWalletData(updatedWalletData)
                             
+                            // ServiceManagerを使用してログを保存
                             let log = WalletDataLog(title: title, type: .plus, data: inputtingData)
-                            modelContext.insert(log)
-                            try? modelContext.save()
+                            do {
+                                try serviceManager.saveLog(log)
+                            } catch {
+                                print("Failed to save log: \(error)")
+                            }
                             
                             reset()
                         }) {
@@ -104,7 +106,8 @@ struct AddView: View {
 
 #Preview {
     TabView {
-        AddView(walletData: .constant(WalletData()))
+        AddView()
             .modelContainer(for: WalletDataLog.self, inMemory: true)
+            .environmentObject(CentralDataContext(forTesting: true))
     }
 }

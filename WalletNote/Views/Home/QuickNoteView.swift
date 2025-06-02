@@ -10,14 +10,12 @@ import SwiftData
 
 struct QuickNoteView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var serviceManager: CentralDataContext
     @Environment(\.dismiss) var dismiss
-    @Binding var data: WalletData
     @State var title: String = ""
-    @State var diff: WalletData
+    @State var diff: WalletData = .init()
     
-    init(walletData: Binding<WalletData>) {
-        _data = walletData
-        diff = WalletData(min: walletData.wrappedValue.getCashData())
+    init() {
     }
     
     var body: some View {
@@ -33,14 +31,15 @@ struct QuickNoteView: View {
                     .frame(height: 44)
                     Spacer()
                     Button("確定") {
-                        data = data.plus(diff)
-                        
-                        let sharedDefaults = UserDefaults(suiteName: "group.ta17eee.WalletNote")
-                        sharedDefaults?.set(data.encode(), forKey: "walletData")
+                        let updatedData = serviceManager.walletData.plus(diff)
+                        serviceManager.saveWalletData(updatedData)
                         
                         let log = WalletDataLog(title: title, type: .quick, data: diff)
-                        modelContext.insert(log)
-                        try? modelContext.save()
+                        do {
+                            try serviceManager.saveLog(log)
+                        } catch {
+                            print("Failed to save log: \(error)")
+                        }
                         
                         dismiss()
                     }
@@ -61,7 +60,7 @@ struct QuickNoteView: View {
                 }
                 Spacer()
                     .frame(height: 16)
-                CashView(data: .constant(data.plus(diff)), title: "残高")
+                CashView(data: .constant(serviceManager.walletData.plus(diff)), title: "残高")
                 Spacer()
                     .frame(height: 16)
                 CashInputView(data: $diff)
@@ -69,6 +68,10 @@ struct QuickNoteView: View {
             }
             Spacer()
                 .frame(width: 16)
+        }
+        .onAppear {
+            // ServiceManagerからwalletDataの現在の金額を取得してdiffを初期化
+            diff = WalletData(min: serviceManager.walletData.getCashData())
         }
         .ignoresSafeArea(.keyboard)
     }

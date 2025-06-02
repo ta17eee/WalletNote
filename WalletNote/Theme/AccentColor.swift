@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-enum AccentColor: String, CaseIterable, Identifiable {
+enum AccentColor: String, CaseIterable, Identifiable, Codable {
     case system = "ブルー"
     case green = "グリーン"
     case indigo = "インディゴ"
