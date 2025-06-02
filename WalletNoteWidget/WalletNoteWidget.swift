@@ -47,7 +47,7 @@ struct WalletNoteWidgetEntryView : View {
 
     var body: some View {
         VStack {
-            CashView(data: .constant(entry.walletData), title: "残高", type: .widgetMedium)
+            CashView(data: .constant(entry.walletData), title: "合計", type: .widgetMedium)
         }
     }
 }

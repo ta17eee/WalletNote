@@ -43,7 +43,7 @@ struct CashInitView: View {
                 }
                 Spacer()
                     .frame(height: 0)
-                CashView(data: $inputtingData, title: "残高")
+                CashView(data: $inputtingData, title: "合計")
                 Spacer()
                     .frame(height: 16)
                 CashInputView(data: $inputtingData)

@@ -60,7 +60,7 @@ struct QuickNoteView: View {
                 }
                 Spacer()
                     .frame(height: 16)
-                CashView(data: .constant(serviceManager.walletData.plus(diff)), title: "残高")
+                CashView(data: .constant(serviceManager.walletData.plus(diff)), title: "合計")
                 Spacer()
                     .frame(height: 16)
                 CashInputView(data: $diff)

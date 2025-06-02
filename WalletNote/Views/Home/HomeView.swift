@@ -30,7 +30,7 @@ struct HomeView: View {
                 HStack {
                     Spacer()
                         .frame(width: 16)
-                    CashView(data: .constant(dataContext.walletData), title: "残高")
+                    CashView(data: .constant(dataContext.walletData), title: "合計")
                     Spacer()
                         .frame(width: 16)
                 }
