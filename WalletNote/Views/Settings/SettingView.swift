@@ -26,6 +26,13 @@ struct SettingView: View {
                             }
                     }
                 }
+                Section(header: Text("支払いモード")) {
+                    Picker("数字キー配列", selection: $serviceManager.numkeybordStyle) {
+                        ForEach(NumkeybordStyle.allCases) { style in
+                            Text(style.rawValue).tag(style)
+                        }
+                    }
+                }
                 Section(header: Text("アプリの外観")) {
                     Picker("テーマ", selection: $serviceManager.appearanceMode) {
                         ForEach(AppearanceMode.allCases) { mode in
