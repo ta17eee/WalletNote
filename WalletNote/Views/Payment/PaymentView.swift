@@ -11,13 +11,13 @@ import SwiftData
 struct PaymentView: View {
     @EnvironmentObject private var dataContext: CentralDataContext
     @Environment(\.modelContext) private var modelContext
-    @State var sum: String = ""
+    @State var sum: Int = 0
     @State var pay: WalletData = .init()
     @State var change: WalletData = .init()
     @State var title: String = ""
     @State var selectedTab: Int = 0
     @State var autoChange: Bool = true
-    @FocusState var isInputtingNumber: Bool
+    @State var isInputtingNumber: Bool = false
     
     init() {
     }
@@ -52,7 +52,7 @@ struct PaymentView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color(.tertiarySystemBackground))
-                            .stroke(Color.gray, lineWidth: 2)
+                            .stroke(isInputtingNumber ? dataContext.accentColor.color: Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         HStack {
                             Spacer()
@@ -60,23 +60,10 @@ struct PaymentView: View {
                             Text("合計金額")
                                 .font(.system(size: 20, weight: .bold, design: .default))
                             if autoChange {
-                                TextField(pay.getValueString(), text: $sum)
+                                Spacer()
+                                Text("\(sum)")
                                     .font(.system(size: 24, weight: .bold, design: .default))
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.numberPad)
-                                    .focused($isInputtingNumber)
                                     .padding()
-                                    .onChange(of: isInputtingNumber) {
-                                        if isInputtingNumber {
-                                            sum = sum.replacingOccurrences(of: ",", with: "")
-                                        } else {
-                                            if let value = Int(sum) {
-                                                sum = String.localizedStringWithFormat("%d", value)
-                                            } else {
-                                                sum = String.localizedStringWithFormat("%d", pay.value - change.value)
-                                            }
-                                        }
-                                    }
                             } else {
                                 Spacer()
                                 Text(String.localizedStringWithFormat("%d", pay.value - change.value))
@@ -88,7 +75,10 @@ struct PaymentView: View {
                             Spacer()
                                 .frame(width: 16)
                         }
-                        .onTapGesture {
+                    }
+                    .onTapGesture {
+                        if autoChange {
+                            sum = 0
                             isInputtingNumber = true
                         }
                     }
@@ -97,7 +87,7 @@ struct PaymentView: View {
                     Button(action: {
                         autoChange.toggle()
                         if autoChange {
-                            sum = String.localizedStringWithFormat("%d", pay.value - change.value)
+                            sum = pay.value - change.value
                         } else {
                             change = pay.calcChange(sum)
                         }
@@ -146,14 +136,21 @@ struct PaymentView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(height: 216)
+                .onTapGesture {
+                    isInputtingNumber = false
+                }
                 Spacer()
                     .frame(maxHeight: 16)
                 HStack {
                     Spacer()
                         .frame(width: 16)
-                    CashInputView(data: selectedTab == 0 ? $pay : $change, limit: selectedTab == 0)
-                        .disabled(autoChange && selectedTab == 1)
-                        .saturation(autoChange && selectedTab == 1 ? 0 : 1)
+                    if isInputtingNumber {
+                        NumInputView(sum: $sum)
+                    } else {
+                        CashInputView(data: selectedTab == 0 ? $pay : $change, limit: selectedTab == 0)
+                            .disabled(autoChange && selectedTab == 1)
+                            .saturation(autoChange && selectedTab == 1 ? 0 : 1)
+                    }
                     Spacer()
                         .frame(width: 16)
                 }
@@ -228,7 +225,7 @@ struct PaymentView: View {
     private func reset() {
         pay = .init()
         change = .init()
-        sum = ""
+        sum = 0
         selectedTab = 0
     }
 }

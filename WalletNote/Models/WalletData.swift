@@ -82,13 +82,8 @@ struct WalletData: Codable {
     func getCashAmount(_ cash: Int) -> Int {
         return cashData.getCashAmount(cash)
     }
-    func calcChange(_ sum: String) -> WalletData{
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        guard let number = formatter.number(from: sum)?.intValue else {
-            return WalletData()
-        }
-        var changeValue = value - number
+    func calcChange(_ sum: Int) -> WalletData{
+        var changeValue = value - sum
         if changeValue <= 0 {
             return WalletData()
         }
