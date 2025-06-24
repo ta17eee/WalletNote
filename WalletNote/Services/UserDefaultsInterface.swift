@@ -101,6 +101,7 @@ struct UserDefaultsKeys {
     static let appGroupIdentifier = "group.ta17eee.WalletNote"
     
     static let walletData = "wallet_data"
+    static let numkeyboardStyle = "numkeyboardStyle"
     static let appearanceMode = "appearance_mode"
     static let accentColor = "accent_color"
     static let backgroundColor = "background_color"

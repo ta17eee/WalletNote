@@ -76,7 +76,7 @@
 				Models/WalletData.swift,
 				Views/Components/CashDisplayView.swift,
 				Views/Components/CoinBillViews.swift,
-				Views/Components/DisplayType.swift,
+				Views/Components/DisplaySize.swift,
 			);
 			target = 6DDC3C092DAD10B500545B4B /* WalletNoteWidgetExtension */;
 		};

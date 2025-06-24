@@ -9,22 +9,22 @@ import SwiftUI
 import SwiftData
 
 struct PaymentView: View {
-    @EnvironmentObject private var serviceManager: CentralDataContext
+    @EnvironmentObject private var dataContext: CentralDataContext
     @Environment(\.modelContext) private var modelContext
-    @State var sum: String = ""
+    @State var sum: Int = 0
     @State var pay: WalletData = .init()
     @State var change: WalletData = .init()
     @State var title: String = ""
     @State var selectedTab: Int = 0
     @State var autoChange: Bool = true
-    @FocusState var isTextFieldFocused: Bool
+    @State var isInputtingNumber: Bool = false
     
     init() {
     }
     
     var body: some View {
         ZStack {
-            serviceManager.backgroundColor.color
+            dataContext.backgroundColor.color
                 .edgesIgnoringSafeArea(.top)
             VStack(spacing: 0) {
                 Spacer(minLength: 0)
@@ -52,7 +52,7 @@ struct PaymentView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color(.tertiarySystemBackground))
-                            .stroke(Color.gray, lineWidth: 2)
+                            .stroke(isInputtingNumber ? dataContext.accentColor.color: Color.gray, lineWidth: 2)
                             .frame(height: 64)
                         HStack {
                             Spacer()
@@ -60,23 +60,10 @@ struct PaymentView: View {
                             Text("合計金額")
                                 .font(.system(size: 20, weight: .bold, design: .default))
                             if autoChange {
-                                TextField(pay.getValueString(), text: $sum)
+                                Spacer()
+                                Text("\(sum)")
                                     .font(.system(size: 24, weight: .bold, design: .default))
-                                    .multilineTextAlignment(.trailing)
-                                    .keyboardType(.numberPad)
-                                    .focused($isTextFieldFocused)
                                     .padding()
-                                    .onChange(of: isTextFieldFocused) {
-                                        if isTextFieldFocused {
-                                            sum = sum.replacingOccurrences(of: ",", with: "")
-                                        } else {
-                                            if let value = Int(sum) {
-                                                sum = String.localizedStringWithFormat("%d", value)
-                                            } else {
-                                                sum = String.localizedStringWithFormat("%d", pay.value - change.value)
-                                            }
-                                        }
-                                    }
                             } else {
                                 Spacer()
                                 Text(String.localizedStringWithFormat("%d", pay.value - change.value))
@@ -89,12 +76,18 @@ struct PaymentView: View {
                                 .frame(width: 16)
                         }
                     }
+                    .onTapGesture {
+                        if autoChange {
+                            sum = 0
+                            isInputtingNumber = true
+                        }
+                    }
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
                         autoChange.toggle()
                         if autoChange {
-                            sum = String.localizedStringWithFormat("%d", pay.value - change.value)
+                            sum = pay.value - change.value
                         } else {
                             change = pay.calcChange(sum)
                         }
@@ -143,14 +136,21 @@ struct PaymentView: View {
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 .frame(height: 216)
+                .onTapGesture {
+                    isInputtingNumber = false
+                }
                 Spacer()
                     .frame(maxHeight: 16)
                 HStack {
                     Spacer()
                         .frame(width: 16)
-                    CashInputView(data: selectedTab == 0 ? $pay : $change)
-                        .disabled(autoChange && selectedTab == 1)
-                        .saturation(autoChange && selectedTab == 1 ? 0 : 1)
+                    if isInputtingNumber {
+                        NumInputView(sum: $sum)
+                    } else {
+                        CashInputView(data: selectedTab == 0 ? $pay : $change, limit: selectedTab == 0)
+                            .disabled(autoChange && selectedTab == 1)
+                            .saturation(autoChange && selectedTab == 1 ? 0 : 1)
+                    }
                     Spacer()
                         .frame(width: 16)
                 }
@@ -181,14 +181,14 @@ struct PaymentView: View {
                         if (autoChange) {
                             change = pay.calcChange(sum)
                         }
-                        var updatedWalletData = serviceManager.walletData.minus(pay)
+                        var updatedWalletData = dataContext.walletData.minus(pay)
                         updatedWalletData = updatedWalletData.plus(change)
-                        serviceManager.saveWalletData(updatedWalletData)
+                        dataContext.saveWalletData(updatedWalletData)
                         
                         let paymentData = change.minus(pay)
                         let log = WalletDataLog(title: title, type: .pay, data: paymentData)
                         do {
-                            try serviceManager.saveLog(log)
+                            try dataContext.saveLog(log)
                         } catch {
                             print("Failed to save log: \(error)")
                         }
@@ -218,14 +218,14 @@ struct PaymentView: View {
         }
         .onAppear {
             // ServiceManagerからwalletDataの現在の金額を取得してpayを初期化
-            pay = .init(max: serviceManager.walletData.getCashData())
+            pay = .init(max: dataContext.walletData.getCashData())
         }
     }
     
     private func reset() {
         pay = .init()
         change = .init()
-        sum = ""
+        sum = 0
         selectedTab = 0
     }
 }

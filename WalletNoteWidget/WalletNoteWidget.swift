@@ -29,7 +29,7 @@ struct Provider: AppIntentTimelineProvider {
     }
     
     private func loadWalletData() -> WalletData {
-        if let data = sharedDefaults?.data(forKey: "walletData") {
+        if let data = sharedDefaults?.data(forKey: "wallet_data") {
             return data.decodeToWalletData()
         }
         return WalletData()

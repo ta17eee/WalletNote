@@ -4,21 +4,21 @@ import SwiftUI
 struct CashView: View {
     @Binding private var data: WalletData
     private let title: String
-    private let type: DisplayType
+    private let size: DisplaySize
     private let baseSize: CGFloat
     private let spaceSize: CGFloat
     
-    init(data: Binding<WalletData>, title: String, type: DisplayType = .nomal) {
+    init(data: Binding<WalletData>, title: String, type: DisplaySize = .nomal) {
         _data = data
         self.title = title
-        self.type = type
+        self.size = type
         baseSize = type.getBaseSize()
         spaceSize = type.getSpaceSize()
     }
     
     var body: some View {
         ZStack {
-            switch type {
+            switch size {
             case .nomal, .slim:
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.pastelOrenge)

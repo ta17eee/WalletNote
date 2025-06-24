@@ -14,6 +14,9 @@ class CentralDataContext: ObservableObject {
     private var storage: StorageInterface?
     
     @Published var walletData: WalletData
+    
+    @Published var numkeybordStyle: NumkeybordStyle
+    
     @Published var emptyTitleText: String
     @Published var appearanceMode: AppearanceMode
     @Published var backgroundColor: BackgroundColor
@@ -33,6 +36,9 @@ class CentralDataContext: ObservableObject {
         }
         
         self.walletData = self.appGroupUserDefaults.load(WalletData.self, forKey: UserDefaultsKeys.walletData) ?? WalletData()
+        
+        self.numkeybordStyle = self.userDefaults.load(NumkeybordStyle.self, forKey: UserDefaultsKeys.appearanceMode) ?? NumkeybordStyle.keypad
+        
         self.emptyTitleText = self.userDefaults.load(String.self, forKey: UserDefaultsKeys.emptyTitleText) ?? "タイトルなし"
         self.appearanceMode = self.userDefaults.load(AppearanceMode.self, forKey: UserDefaultsKeys.appearanceMode) ?? AppearanceMode.system
         self.backgroundColor = self.userDefaults.load(BackgroundColor.self, forKey: UserDefaultsKeys.backgroundColor) ?? BackgroundColor.system
@@ -64,6 +70,11 @@ extension CentralDataContext {
     /// WalletDataを読み込み（非推奨：@Published walletDataプロパティを使用してください）
     func loadWalletData() -> WalletData? {
         return appGroupUserDefaults.load(WalletData.self, forKey: UserDefaultsKeys.walletData)
+    }
+    
+    func saveNumkeybordStyle(_ style: NumkeybordStyle) {
+        userDefaults.save(style.rawValue, forKey: UserDefaultsKeys.numkeyboardStyle)
+        self.numkeybordStyle = style
     }
     
     /// 外観モードを保存

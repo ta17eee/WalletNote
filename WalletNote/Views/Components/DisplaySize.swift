@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-enum DisplayType {
+enum DisplaySize {
     case nomal
     case slim
     case widgetMedium
