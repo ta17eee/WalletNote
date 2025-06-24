@@ -50,7 +50,7 @@ struct QuickNoteView: View {
                     .frame(height: 0)
                 ZStack {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.white)
+                        .fill(Color(.tertiarySystemBackground))
                         .stroke(Color.gray, lineWidth: 2)
                         .frame(height: 64)
                     TextField("ここにタイトルを入れましょう", text: $title)
