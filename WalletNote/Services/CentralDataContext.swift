@@ -73,7 +73,7 @@ extension CentralDataContext {
     }
     
     func saveNumkeybordStyle(_ style: NumkeybordStyle) {
-        userDefaults.save(style.rawValue, forKey: UserDefaultsKeys.numkeyboardStyle)
+        userDefaults.save(style.label, forKey: UserDefaultsKeys.numkeyboardStyle)
         self.numkeybordStyle = style
     }
     

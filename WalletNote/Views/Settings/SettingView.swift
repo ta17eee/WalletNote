@@ -29,8 +29,12 @@ struct SettingView: View {
                 Section(header: Text("支払いモード")) {
                     Picker("数字キー配列", selection: $serviceManager.numkeybordStyle) {
                         ForEach(NumkeybordStyle.allCases) { style in
-                            Text(style.rawValue).tag(style)
+                            Text(style.label).tag(style)
                         }
+                    }
+                    .pickerStyle(.navigationLink)
+                    .onChange(of: serviceManager.numkeybordStyle) {
+                        serviceManager.saveNumkeybordStyle(serviceManager.numkeybordStyle)
                     }
                 }
                 Section(header: Text("アプリの外観")) {

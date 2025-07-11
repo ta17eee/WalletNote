@@ -44,11 +44,18 @@ struct NumInputView: View {
     }
 }
 
-enum NumkeybordStyle: String, Codable, CaseIterable, Identifiable {
-    case keypad = "キーパッド配列"
-    case smartphone = "スマホ配列"
+enum NumkeybordStyle: Int, Codable, CaseIterable, Identifiable {
+    case keypad
+    case smartphone
     
-    var id: String { self.rawValue }
+    var id: Int { self.rawValue }
+    
+    var label: String {
+        switch self {
+        case .keypad: return "キーパッド配列"
+        case .smartphone: return "スマホ配列"
+        }
+    }
     
     func getButton(row: Int, col: Int) -> KeyboardButtonData {
         switch self {

@@ -19,9 +19,6 @@ struct PaymentView: View {
     @State var autoChange: Bool = true
     @State var isInputtingNumber: Bool = false
     
-    init() {
-    }
-    
     var body: some View {
         ZStack {
             dataContext.backgroundColor.color
@@ -59,13 +56,12 @@ struct PaymentView: View {
                                 .frame(width: 16)
                             Text("合計金額")
                                 .font(.system(size: 20, weight: .bold, design: .default))
-                            if autoChange {
-                                Spacer()
+                            Spacer()
+                            if sum != 0 {
                                 Text("\(sum)")
                                     .font(.system(size: 24, weight: .bold, design: .default))
                                     .padding()
                             } else {
-                                Spacer()
                                 Text(String.localizedStringWithFormat("%d", pay.value - change.value))
                                     .font(.system(size: 24, weight: .bold, design: .default))
                                     .padding()
@@ -79,7 +75,7 @@ struct PaymentView: View {
                     .onTapGesture {
                         if autoChange {
                             sum = 0
-                            isInputtingNumber = true
+                            isInputtingNumber.toggle()
                         }
                     }
                     Spacer()
@@ -87,9 +83,11 @@ struct PaymentView: View {
                     Button(action: {
                         autoChange.toggle()
                         if autoChange {
+                            // false → true: 合計金額を計算し、それを利用してchangeを再計算
                             sum = pay.value - change.value
                         } else {
-                            change = pay.calcChange(sum)
+                            // true → false: お釣りのデータを保持（何もしない）
+                            // changeは現在の値を維持
                         }
                     }) {
                         ZStack {
@@ -130,7 +128,7 @@ struct PaymentView: View {
                     }.tag(0)
                     HStack {
                         Spacer().frame(width: 16)
-                        CashView(data: autoChange ? .constant(pay.calcChange(sum)) : $change, title: "お釣り", type: .slim)
+                        CashView(data: autoChange ? .constant(sum == 0 ? WalletData() : pay.calcChange(sum)) : $change, title: "お釣り", type: .slim)
                         Spacer().frame(width: 16)
                     }.tag(1)
                 }
@@ -146,10 +144,12 @@ struct PaymentView: View {
                         .frame(width: 16)
                     if isInputtingNumber {
                         NumInputView(sum: $sum)
+                    } else if selectedTab == 0 {
+                        CashInputView(data: $pay, limit: true)
                     } else {
-                        CashInputView(data: selectedTab == 0 ? $pay : $change, limit: selectedTab == 0)
-                            .disabled(autoChange && selectedTab == 1)
-                            .saturation(autoChange && selectedTab == 1 ? 0 : 1)
+                        CashInputView(data: $change, limit: false)
+                            .disabled(autoChange)
+                            .saturation(autoChange ? 0 : 1)
                     }
                     Spacer()
                         .frame(width: 16)
@@ -178,9 +178,15 @@ struct PaymentView: View {
                     Spacer()
                         .frame(width: 16)
                     Button(action: {
-                        if (autoChange) {
-                            change = pay.calcChange(sum)
+                        if autoChange {
+                            // autoChange=trueの時: sumが0なら未入力なのでchangeの計算はしない
+                            if sum != 0 {
+                                change = pay.calcChange(sum)
+                            } else {
+                                change = WalletData()
+                            }
                         }
+                        // autoChange=falseの時: payとchangeの値を直接利用
                         var updatedWalletData = dataContext.walletData.minus(pay)
                         updatedWalletData = updatedWalletData.plus(change)
                         dataContext.saveWalletData(updatedWalletData)
@@ -218,15 +224,16 @@ struct PaymentView: View {
         }
         .onAppear {
             // ServiceManagerからwalletDataの現在の金額を取得してpayを初期化
-            pay = .init(max: dataContext.walletData.getCashData())
+            pay = .init(min: nil, max: dataContext.walletData.getCashData())
         }
     }
     
     private func reset() {
-        pay = .init()
+        pay = .init(min: nil, max: dataContext.walletData.getCashData())
         change = .init()
         sum = 0
         selectedTab = 0
+        isInputtingNumber = false
     }
 }
 
