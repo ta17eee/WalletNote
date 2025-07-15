@@ -78,6 +78,19 @@ struct HomeView: View {
                 }
                 
                 Spacer()
+                
+                // 広告バナーまたはプレミアム機能
+                if dataContext.shouldShowAds {
+                    AdBannerView()
+                        .frame(height: 50)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                } else {
+                    // プレミアム時のショートカットボタン
+                    PremiumShortcutsView()
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                }
             }
             .sheet(item: $activeSheet) { sheet in
                 switch sheet {

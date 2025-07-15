@@ -22,6 +22,8 @@ class CentralDataContext: ObservableObject {
     @Published var backgroundColor: BackgroundColor
     @Published var accentColor: AccentColor
     
+    @Published var isPremium: Bool
+    
     init(forTesting: Bool = false) {
         if forTesting {
             // テスト用のモック
@@ -43,6 +45,8 @@ class CentralDataContext: ObservableObject {
         self.appearanceMode = self.userDefaults.load(AppearanceMode.self, forKey: UserDefaultsKeys.appearanceMode) ?? AppearanceMode.system
         self.backgroundColor = self.userDefaults.load(BackgroundColor.self, forKey: UserDefaultsKeys.backgroundColor) ?? BackgroundColor.system
         self.accentColor = self.userDefaults.load(AccentColor.self, forKey: UserDefaultsKeys.accentColor) ?? AccentColor.system
+        
+        self.isPremium = self.userDefaults.load(Bool.self, forKey: UserDefaultsKeys.isPremium) ?? false
     }
     
     /// SwiftDataのModelContextを設定
@@ -148,6 +152,22 @@ extension CentralDataContext {
     /// 空のタイトルテキストを読み込み
     func loadEmptyTitleText() -> String {
         return userDefaults.load(String.self, forKey: UserDefaultsKeys.emptyTitleText) ?? "タイトルなし"
+    }
+    
+    /// プレミアム状態を保存
+    func savePremiumStatus(_ isPremium: Bool) {
+        userDefaults.save(isPremium, forKey: UserDefaultsKeys.isPremium)
+        self.isPremium = isPremium
+    }
+    
+    /// プレミアム状態を読み込み
+    func loadPremiumStatus() -> Bool {
+        return userDefaults.load(Bool.self, forKey: UserDefaultsKeys.isPremium) ?? false
+    }
+    
+    /// 広告を表示するかどうか
+    var shouldShowAds: Bool {
+        return !isPremium
     }
 }
 

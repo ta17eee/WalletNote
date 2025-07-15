@@ -108,4 +108,5 @@ struct UserDefaultsKeys {
     static let hasCompletedOnboarding = "has_completed_onboarding"
     static let selectedLogTab = "selectedLogTab"
     static let emptyTitleText = "emptyTitleText"
+    static let isPremium = "is_premium"
 }

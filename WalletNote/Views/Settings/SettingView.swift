@@ -9,10 +9,50 @@ import SwiftUI
 
 struct SettingView: View {
     @EnvironmentObject private var serviceManager: CentralDataContext
+    @State private var showUpgradeSheet = false
     
     var body: some View {
         NavigationStack {
             Form {
+                // プラス機能セクション
+                Section(header: Text("プラス機能")) {
+                    if serviceManager.isPremium {
+                        HStack {
+                            Image(systemName: "star.fill")
+                                .foregroundColor(.yellow)
+                            Text("プレミアム会員")
+                                .fontWeight(.medium)
+                            Spacer()
+                            Text("有効")
+                                .foregroundColor(.green)
+                                .fontWeight(.medium)
+                        }
+                        
+                        Button("購入を復元") {
+                            Task {
+                                let purchaseManager = PurchaseManager(dataContext: serviceManager)
+                                await purchaseManager.restorePurchases()
+                            }
+                        }
+                    } else {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("プレミアム機能を利用")
+                                    .fontWeight(.medium)
+                                Text("広告削除 + 特別機能")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Button("詳細") {
+                                showUpgradeSheet = true
+                            }
+                            .foregroundColor(.blue)
+                        }
+                    }
+                }
+                
+                
                 Section(header: Text("共通設定")) {
                     HStack {
                         Text("履歴が無題のとき")
@@ -85,6 +125,9 @@ struct SettingView: View {
                 }
             }
             .navigationTitle("設定")
+            .sheet(isPresented: $showUpgradeSheet) {
+                UpgradeView(dataContext: serviceManager)
+            }
         }
     }
 }
